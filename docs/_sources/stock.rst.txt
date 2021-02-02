@@ -1,0 +1,6 @@
+==================
+stock
+==================
+
+.. automodule:: sysdynpy.stock
+   :members:

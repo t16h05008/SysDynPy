@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>sysdynpy.system &mdash; SysDynPy 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SysDynPy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SysDynPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sysdynpy.system</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sysdynpy.system</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="System"><a class="viewcode-back" href="../../system.html#sysdynpy.system.System">[docs]</a><span></span><span class="k">class</span> <span class="nc">System</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class represents a System Dynamics system/model.</span>
+
+<span class="sd">    :param name: The system name</span>
+<span class="sd">    :type name: str, required</span>
+<span class="sd">    :param simulation_steps: The number of steps to simulate </span>
+<span class="sd">        when run_simulation() is called, defaults to 10</span>
+<span class="sd">    :type simulation_steps: int, optional</span>
+<span class="sd">    :param time_unit: Defines the time period of one simulation step.</span>
+<span class="sd">        The value must be one of the values defines in :code:`VALID_TIME_UNITS`</span>
+<span class="sd">    :type time_unit: str, optional, defaults to :code:`days`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VALID_TIME_UNITS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">,</span> <span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hours&quot;</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="s2">&quot;weeks&quot;</span><span class="p">,</span> <span class="s2">&quot;months&quot;</span><span class="p">,</span> <span class="s2">&quot;years&quot;</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Possible values for the property :code:`time_unit`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+
+<div class="viewcode-block" id="System.__init__"><a class="viewcode-back" href="../../system.html#sysdynpy.system.System.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">simulation_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">time_unit</span> <span class="o">=</span> <span class="s2">&quot;days&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_steps</span> <span class="o">=</span> <span class="n">simulation_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_system_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot;private list of system elements</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+    <span class="c1"># TODO results</span>
+
+    <span class="c1"># TODO runSimulation</span>
+<div class="viewcode-block" id="System.run_simulation"><a class="viewcode-back" href="../../system.html#sysdynpy.system.System.run_simulation">[docs]</a>    <span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;TODO</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="System.show_system_elements"><a class="viewcode-back" href="../../system.html#sysdynpy.system.System.show_system_elements">[docs]</a>    <span class="k">def</span> <span class="nf">show_system_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a string with information about the system elements.</span>
+
+<span class="sd">        This includes the properties :code:`name` and :code:`value`. Depending on the system</span>
+<span class="sd">        element :code:`calc_rule` and :code:`input_elements` are given as additional</span>
+<span class="sd">        information. :code:`input_elements` only shows the name of all direct input</span>
+<span class="sd">        elements to prevent recursion.</span>
+<span class="sd">        The string is printed to the console.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;==== &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; ====</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_elements</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">name</span> \
+                <span class="o">+</span> <span class="s2">&quot;, value: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="s2">&quot;calc_rule&quot;</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;, calc_rule: [&quot;</span> <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">calc_rule</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="s2">&quot;input_elements&quot;</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;, input_elements: [&quot;</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">input_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">input_elements</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">input_elements</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="n">input_element</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;}, &quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="n">input_element</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
+
+    <span class="c1"># TODO saveSimulationResults csv, jpg/png</span>
+    <span class="c1"># TODO &quot;print&quot;</span>
+
+    <span class="c1"># TODO &quot;export&quot;</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: The name of the system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">simulation_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;int: The number of steps for the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_steps</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Defines the time period of one simulation step.</span>
+<span class="sd">        The value must be one of the values defines in :code:`VALID_TIME_UNITS`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_unit</span> 
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">system_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;list: A list that maintains all elements currently in the system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_system_elements</span>
+
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;name can not be empty&quot;</span><span class="p">)</span>
+
+
+    <span class="nd">@simulation_steps</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">simulation_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_steps</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;simulation_steps must be positive.&quot;</span><span class="p">)</span>
+
+
+    <span class="nd">@time_unit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">System</span><span class="o">.</span><span class="n">VALID_TIME_UNITS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_unit</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;name can not be empty&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates and returns a string representation of the system.</span>
+
+<span class="sd">        :return: The result string</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> \
+            <span class="o">+</span> <span class="s2">&quot;, simulation_steps: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_steps</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="s2">&quot;, time_unit: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">+</span> <span class="s2">&quot; }&quot;</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Tim Herker.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
