@@ -27,13 +27,6 @@ class System(object):
         """private list of system elements
         """
 
-    # TODO results
-
-    # TODO runSimulation
-    def run_simulation(self):
-        """TODO
-        """
-        pass
 
     def show_system_elements(self):
         """Creates a string with information about the system elements.

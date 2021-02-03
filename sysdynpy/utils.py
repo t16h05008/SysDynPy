@@ -1,13 +1,19 @@
 from abc import ABC, ABCMeta, abstractmethod
+from asteval import Interpreter
 import re
+import numbers
 
-# utility functions and classes
+aeval = Interpreter()
+
+"""This module provides utility methods and classes for internal use
+"""
 
 class SubclassOnlyABC(object):
     """Helper class to prevent instantiation.
     The class SysDynPy is declared as abstract and should not be instantiated.
     However, because there are no abstract methods present, it could be
     instantiated.
+    
     By deriving SysDynPy from this class we ensure that no instances can be
     created. This is done by overriding the __new__ method.
     For more info see: https://stackoverflow.com/questions/50099600/abstract-classes-without-abstract-methods-creating-objects-in-python
@@ -78,5 +84,66 @@ def _validate_calc_rule(calc_rule, element):
             " Only + - * and / are allowed.")
 
 
+def _calculate_dynamic_value(element):
+    """Calculates the values for a given element based on the calculation rule.
 
-#calc_rule_split = re.split('\+|\-|\*|\/', calc_rule)
+    This is a recursive function to calculate the value of a Flow or
+    dynamic variable. The values of flows or dynamic variables can always be
+    deduced from parameters or stocks. But it can not be assumed that a dynamic
+    variable or flow **directly** depends on only parameters or stocks.
+
+    :param element: The element to calculate a value for.
+    :type element: Flow or DynamicVariable
+    :raises TypeError: If the calculation rule does not evaluate to a numerical result
+    :return: The calculated value
+    :rtype: double
+    """
+    result = None
+    calc_rule = element.calc_rule
+
+    # for each input element
+    for idx, inp_elem in enumerate(element.input_elements):
+        # check its type
+        if "Stock" in str(type(inp_elem)) or "Parameter" in str(type(inp_elem)):
+            # if stock or parameter replace name in calculation rule
+            calc_rule = \
+                calc_rule.replace(inp_elem.name, str(inp_elem.value))
+        else:
+            # else call this function again and replace name with result
+            # print("calling recursive function for input element " + inp_elem.name + " of element " + element.name)
+            calc_rule = \
+                calc_rule.replace(inp_elem.name, str(_calculate_dynamic_value(inp_elem)))
+
+    # calculate value
+    result = aeval(calc_rule)
+
+    if not isinstance(result, numbers.Number):
+        raise TypeError("The result of is not numeric. Is is: " + str(result))
+    else:
+        return result
+
+
+def _calculate_stock_value(stock):
+    """[summary]
+
+    Unlike with _calculate_dynamic_value no recursion is needed here.
+
+    :param stock: [description]
+    :type stock: [type]
+    """
+    result = None
+    calc_rule = stock.calc_rule
+
+    # for each input element
+    for idx, inp_elem in enumerate(stock.input_elements):
+        # replace name in calculation rule
+        calc_rule = calc_rule.replace(inp_elem.name, str(inp_elem.value))
+
+    # calculate value
+    result = aeval(calc_rule)
+
+    if not isinstance(result, numbers.Number):
+        raise TypeError("The result of is not numeric. Is is: " + str(result))
+    else:
+        return result
+
