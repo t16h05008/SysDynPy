@@ -8,7 +8,7 @@ from sysdynpy.simulator import *
 # This example implements the Lotka-Volterra model.
 
 # create system
-lv_system = System("lotka-volterra", 30, "weeks")
+lv_system = System("lotka-volterra", 39, "weeks")
 
 # create elements
 raeuber = Stock("Räuber", 40, lv_system)
@@ -48,10 +48,7 @@ beute.calc_rule = "Beutezuwachs - Beuteverlust"
 beutezuwachs.calc_rule = "WACHSTUMSRATE_BEUTE * Beute"
 beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
 
-lv_system.show_system_elements()
-
 Simulator.run_simulation(lv_system)
-
-lv_system.show_system_elements()
+Simulator.get_simulation_results()
 #lv_system.export_simulation_results()
 #lv_system.visualize_simulation_results(raeuber, beute)

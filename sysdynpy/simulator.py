@@ -12,17 +12,20 @@ class Simulator(utils.SubclassOnlyABC):
     """
 
 
-    aeval = Interpreter()
-    system_states = []
+    _aeval = Interpreter()
+    _system_states = []
 
     @classmethod
     def run_simulation(cls, system):
         """TODO
         """
 
-        for i in range(system.simulation_steps):
-            print("Starting simulation step " + str(i+1) + " of "
-                + str(system.simulation_steps))
+        
+        # in the initial iteration values for dynamic variables and
+        # flows are calculated, but nothing else changes. So we need one iteration
+        # more to get the required number of steps
+        for i in range(int(system.simulation_steps / system.dt)+1):
+
             # make a deep copy of the current system state
             system_backup = copy.deepcopy(system)
 
@@ -36,22 +39,49 @@ class Simulator(utils.SubclassOnlyABC):
                             cls._calculate_dynamic_value(elem)
                     except TypeError as t:
                         raise t
-            
+
             # now calculate stocks
             for idx, elem in enumerate(system.system_elements):
                 current_stock_value = system.system_elements[idx].value
                 if "Stock" in str(type(elem)):
                     try:
-                        change = cls._calculate_stock_value(elem)
-                        system.system_elements[idx].value = current_stock_value + change
+                        change = cls._calculate_stock_change(elem)
+                        system.system_elements[idx].value = current_stock_value + change * system.dt
                     except TypeError as t:
                         raise t
             
-            system.show_system_elements()
-            time.sleep(1)
+            # store copy of system state
+            if i % (1 / system.dt) == 0:
+                print(i)
+                cls._system_states.append(system_backup)
+
+    @classmethod
+    def get_simulation_results(cls):
+        """[summary]
+
+        :return: [description]
+        :rtype: [type]
+        """
+        if not cls._system_states: # empty
+            return None
+        else:
+            result = {}
+            # create dict from list of system states
+            # for each state
+            for state in cls._system_states:
+                # iterate system elements
+                for element in state.system_elements:
+                    if element.name not in result:
+                        result[element.name] = [element.value]
+                    else:
+                        # only add further values for non-constant elements
+                        if not "Parameter" in str(type(element)):
+                            result[element.name].append(element.value)
+            
+            print(result)
     
-    @staticmethod
-    def _calculate_dynamic_value(element):
+    @classmethod
+    def _calculate_dynamic_value(cls, element):
         """Calculates the values for a given element based on the calculation rule.
 
         This is a recursive function to calculate the value of a Flow or
@@ -79,18 +109,18 @@ class Simulator(utils.SubclassOnlyABC):
                 # else call this function again and replace name with result
                 # print("calling recursive function for input element " + inp_elem.name + " of element " + element.name)
                 calc_rule = \
-                    calc_rule.replace(inp_elem.name, str(Simulator._calculate_dynamic_value(inp_elem)))
+                    calc_rule.replace(inp_elem.name, str(cls._calculate_dynamic_value(inp_elem)))
 
         # calculate value
-        result = Simulator.aeval(calc_rule)
+        result = cls._aeval(calc_rule)
 
         if not isinstance(result, numbers.Number):
             raise TypeError("The result of is not numeric. Is is: " + str(result))
         else:
             return result
 
-    @staticmethod
-    def _calculate_stock_value(stock):
+    @classmethod
+    def _calculate_stock_change(cls, stock):
         """[summary]
 
         Unlike with _calculate_dynamic_value no recursion is needed here.
@@ -107,7 +137,7 @@ class Simulator(utils.SubclassOnlyABC):
             calc_rule = calc_rule.replace(inp_elem.name, str(inp_elem.value))
 
         # calculate value
-        result = Simulator.aeval(calc_rule)
+        result = cls._aeval(calc_rule)
 
         if not isinstance(result, numbers.Number):
             raise TypeError("The result of is not numeric. Is is: " + str(result))

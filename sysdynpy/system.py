@@ -23,6 +23,7 @@ class System(object):
         self.name = name
         self.simulation_steps = simulation_steps
         self.time_unit = time_unit
+        self.dt = 0.05
         self._system_elements = []
         """private list of system elements
         """
