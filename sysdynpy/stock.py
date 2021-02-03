@@ -29,7 +29,7 @@ class Stock(SystemElement):
     @calc_rule.setter
     def calc_rule(self, value):
         try:
-            utils._validate_calc_rule(value, self.input_elements)
+            utils._validate_calc_rule(value, self)
         except ValueError as v:
             raise v
         else:

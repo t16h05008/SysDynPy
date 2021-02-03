@@ -28,8 +28,34 @@ def _check_if_system_element_name_is_unique(name, system):
             + "in system '" + system.name + "'")
 
 
-def _validate_calc_rule(calc_rule, input_elements):
-    """ TODO """
+def _validate_calc_rule(calc_rule, element):
+    """Validates the syntax for a given calculation rule.
+
+    There are two requirements:
+        1. Each input element has to be used in the calculation rule
+        2. Only basic arithmetic operations are allowed (for now).
+    
+    Because input elements can be named like "some-input+element" splitting
+    the string at arithmetic operators is not possible. Instead this method
+    replaces each input element by its index in the list.
+
+    "some-element-name*some-other+name" --> "0*1" (or "1*0")
+
+    Once the string is transformed like this it is possible to check if all
+    characters are either numbers or one of the supported arithmetic operations.
+
+    :param value: The calculation rule to validate
+    :type value: str
+    :param element: The system element to validate the calculation rule for.
+    :type element: Subclass of SystemElement
+    :raises ValueError: If the calculation does not use all input elements
+    :raises ValueError: If an unsupported mathematical operation is given.
+        Supported operations are + - * and /.
+    :returns: nothing.
+    :rtype: None
+    """
+
+    input_elements = element.input_elements
 
     calc_rule = calc_rule.strip()
 
@@ -41,11 +67,11 @@ def _validate_calc_rule(calc_rule, input_elements):
             calc_rule = calc_rule.replace(val.name, str(idx))
         else:
             # element not in calc_rule
-            raise ValueError("The calculation rule must use all input elements.")
+            raise ValueError("The calculation rule must use all input elements." +
+                                " Element name: "+ element.name)
 
     # remove spaces
     calc_rule = calc_rule.replace(" ", "")
-    print(calc_rule)
     # only allow + - * / as additional characters
     if not re.match('^[0-9\+\-\*\/]*$', calc_rule):
         raise ValueError("Unsupported mathematical operation."\
