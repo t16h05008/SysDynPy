@@ -3,11 +3,12 @@ from sysdynpy.stock import *
 from sysdynpy.flow import *
 from sysdynpy.dynamicvariable import *
 from sysdynpy.parameter import *
+from sysdynpy.simulator import *
 
 # This example implements the Lotka-Volterra model.
 
 # create system
-lv_system = System("lotka-volterra", 7, "weeks")
+lv_system = System("lotka-volterra", 30, "weeks")
 
 # create elements
 raeuber = Stock("Räuber", 40, lv_system)
@@ -37,9 +38,9 @@ beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
 beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
 
 # set calculation rules
-raeuber.calc_rule = "Räuberzuwachs * Energieverluste"
+raeuber.calc_rule = "Räuberzuwachs - Energieverluste"
 raeuberzuwachs.calc_rule = "Treffen * ZUWACHSRATE_RÄUBER"
-energieverluste = "ENERGIEVERLUSTRATE_RÄUBER * Räuber"
+energieverluste.calc_rule = "ENERGIEVERLUSTRATE_RÄUBER * Räuber"
 
 treffen.calc_rule = "Beute * Räuber"
 
@@ -49,6 +50,8 @@ beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
 
 lv_system.show_system_elements()
 
-#lv_system.run_simulation()
+Simulator.run_simulation(lv_system)
+
+lv_system.show_system_elements()
 #lv_system.export_simulation_results()
 #lv_system.visualize_simulation_results(raeuber, beute)
