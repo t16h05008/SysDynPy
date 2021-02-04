@@ -1,9 +1,12 @@
+import pprint
+
 from sysdynpy.system import *
 from sysdynpy.stock import *
 from sysdynpy.flow import *
 from sysdynpy.dynamicvariable import *
 from sysdynpy.parameter import *
 from sysdynpy.simulator import *
+from sysdynpy.exporter import *
 
 # This example implements the Lotka-Volterra model.
 
@@ -48,7 +51,11 @@ beute.calc_rule = "Beutezuwachs - Beuteverlust"
 beutezuwachs.calc_rule = "WACHSTUMSRATE_BEUTE * Beute"
 beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
 
-Simulator.run_simulation(lv_system)
-Simulator.get_simulation_results()
-#lv_system.export_simulation_results()
-#lv_system.visualize_simulation_results(raeuber, beute)
+Simulator.run_simulation(lv_system) # run simulation
+# returns a dict
+# Key = Name of the system element, Value = List of Values
+sim_results = Simulator.get_simulation_results()
+pprint.pprint(sim_results) # print formatted results to console
+Exporter.export_as("csv", sim_results, ["Räuber", "Beute"], "./lotka-volterra-results.csv")
+Exporter.export_as("json", sim_results, ["Räuber", "Beute"], "./lotka-volterra-results.json")
+Exporter.export_as("png", sim_results, ["Beute", "Räuber"], "./lotka-volterra-results")
