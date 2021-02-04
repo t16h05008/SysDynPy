@@ -84,11 +84,9 @@ class Simulator(utils.SubclassOnlyABC):
                     if element.name not in result:
                         result[element.name] = [element.value]
                     else:
-                        # only add further values for non-constant elements
-                        if not "Parameter" in str(type(element)):
-                            result[element.name].append(element.value)
-            
-            print(result)
+                        result[element.name].append(element.value)
+        return result
+
     
     @classmethod
     def _calculate_dynamic_value(cls, element):
