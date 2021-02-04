@@ -11,7 +11,8 @@ from sysdynpy.exporter import *
 # This example implements the Lotka-Volterra model.
 
 # create system
-lv_system = System("lotka-volterra", 39, "weeks")
+number_of_simulation_steps = 200
+lv_system = System("lotka-volterra", number_of_simulation_steps, "weeks")
 
 # create elements
 raeuber = Stock("Räuber", 40, lv_system)
@@ -56,6 +57,18 @@ Simulator.run_simulation(lv_system) # run simulation
 # Key = Name of the system element, Value = List of Values
 sim_results = Simulator.get_simulation_results()
 pprint.pprint(sim_results) # print formatted results to console
-Exporter.export_as("csv", sim_results, ["Räuber", "Beute"], "./lotka-volterra-results.csv")
-Exporter.export_as("json", sim_results, ["Räuber", "Beute"], "./lotka-volterra-results.json")
-Exporter.export_as("png", sim_results, ["Beute", "Räuber"], "./lotka-volterra-results")
+
+# export results to various formats
+Exporter.export_data(results=sim_results, file_format="csv", \
+    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results.csv")
+
+Exporter.export_data(results=sim_results, file_format="json", \
+    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results.json")
+
+Exporter.export_graph(results=sim_results, file_format="png", \
+    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results", \
+    title="Lotka-Volterra-Simulation", label_x="t[weeks]", label_y="Number of Animals",
+    range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["red", "blue"],
+    line_width=2, legend_pos="upper right")
+
+#Exporter.export_graph(sim_results, "jpg", ["Beute", "Räuber"], "./lotka-volterra-results.jpg")
