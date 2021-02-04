@@ -20,10 +20,11 @@ class Simulator(utils.SubclassOnlyABC):
         """TODO
         """
 
-        
-        # in the initial iteration values for dynamic variables and
-        # flows are calculated, but nothing else changes. So we need one iteration
-        # more to get the required number of steps
+        """
+        In the initial iteration values for dynamic variables and
+        flows are calculated, but nothing else changes. So we need one iteration
+        more to get the required number of steps
+        """
         for i in range(int(system.simulation_steps / system.dt)+1):
 
             # make a deep copy of the current system state
@@ -40,6 +41,18 @@ class Simulator(utils.SubclassOnlyABC):
                     except TypeError as t:
                         raise t
 
+            
+            if i == 0:
+                # in the first iteration only store the initial system state
+                system_backup = copy.deepcopy(system)
+                cls._system_states.append(system_backup)
+                continue
+
+            # store copy of system state every 1 / dt steps
+            # example: dt = 0.05 --> every 20 steps
+            if i % (1 / system.dt) == 0:
+                cls._system_states.append(system_backup)
+
             # now calculate stocks
             for idx, elem in enumerate(system.system_elements):
                 current_stock_value = system.system_elements[idx].value
@@ -50,10 +63,7 @@ class Simulator(utils.SubclassOnlyABC):
                     except TypeError as t:
                         raise t
             
-            # store copy of system state
-            if i % (1 / system.dt) == 0:
-                print(i)
-                cls._system_states.append(system_backup)
+            
 
     @classmethod
     def get_simulation_results(cls):
