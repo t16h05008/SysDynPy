@@ -17,13 +17,13 @@ class System(object):
     """
     
 
-    def __init__(self, name, simulation_steps = 10, time_unit = "days"):
+    def __init__(self, name, simulation_steps = 10, time_unit = "days", dt=0.05):
         """Constructor method
         """
         self.name = name
         self.simulation_steps = simulation_steps
         self.time_unit = time_unit
-        self.dt = 0.05
+        self.dt = dt
         self._system_elements = []
         """private list of system elements
         """
