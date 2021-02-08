@@ -17,7 +17,7 @@ class System(object):
     """
     
 
-    def __init__(self, name, simulation_steps = 10, time_unit = "days", dt=0.05):
+    def __init__(self, name="", simulation_steps = 10, time_unit = "days", dt=0.05):
         """Constructor method
         """
         self.name = name
@@ -80,7 +80,13 @@ class System(object):
         """str: Defines the time period of one simulation step.
         The value must be one of the values defines in :code:`VALID_TIME_UNITS`
         """
-        return self._time_unit 
+        return self._time_unit
+    
+    @property
+    def dt(self):
+        """TODO
+        """
+        return self._dt
 
 
     @property
@@ -111,6 +117,11 @@ class System(object):
             self._time_unit = value.strip().lower()
         else:
             raise ValueError("name can not be empty")
+    
+    @dt.setter
+    def dt(self, value):
+        if 0 < value and value <= 1:
+            self._dt = value
 
 
     def __str__(self):

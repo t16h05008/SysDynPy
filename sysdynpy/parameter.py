@@ -9,10 +9,6 @@ class Parameter(SystemElement):
         """ TODO """
         super().__init__(name, value, system)
 
-        utils._check_if_system_element_name_is_unique(self.name, self.system)
-
-        # add to list of elements in system class
-        system.system_elements.append(self)
 
     def __str__(self):
         s = ""
