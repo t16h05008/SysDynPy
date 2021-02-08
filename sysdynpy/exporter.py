@@ -8,7 +8,9 @@ class Exporter(utils.SubclassOnlyABC):
     """This abstract class can be used to export simulation results to different formats
     """
 
-    supported_formats = ["csv", "json", "jpg", "png"]
+    _supported_formats = ["csv", "json", "jpg", "png"]
+    """ A private list of supported file formats. Can be used to validate a given input format.
+    """
 
     @classmethod
     def export_data(cls, results, file_format, system_elements, rel_path="./results"):
@@ -115,10 +117,10 @@ class Exporter(utils.SubclassOnlyABC):
 
     @classmethod
     def _check_file_format(cls, file_format):
-        if file_format.lower() not in cls.supported_formats:
+        if file_format.lower() not in cls._supported_formats:
             raise ValueError("Given file format '" + file_format
             + "' is not supported. Supported formats are: "
-            + cls.supported_formats)
+            + cls._supported_formats)
 
     
 def _create_abs_output_path(rel_path, file_format):

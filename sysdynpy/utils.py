@@ -44,7 +44,9 @@ def _validate_calc_rule(calc_rule, element):
     "some-element-name*some-other+name" --> "0*1" (or "1*0")
 
     Once the string is transformed like this it is possible to check if all
-    characters are either numbers or one of the supported arithmetic operations.
+    characters are either numbers, brackets or one of the supported arithmetic operations.
+
+    This method does NOT check if brackets are set correctly.
 
     :param value: The calculation rule to validate
     :type value: str

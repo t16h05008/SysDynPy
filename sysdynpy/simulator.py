@@ -7,16 +7,32 @@ import sysdynpy.utils as utils
 
 
 
-class Simulator(utils.SubclassOnlyABC):
-    """This abstract class can be used to run simulations for a given system.
+class Simulator(object):
+    """This class can be used to run simulations for a given system.
+
+    :param simulation_steps: The number of steps to simulate 
+        when run_simulation() is called, defaults to 10
+    :type simulation_steps: int, optional
+    :param time_unit: Defines the time period of one simulation step.
+        The value must be one of the values defines in :code:`VALID_TIME_UNITS`
+    :type time_unit: str, optional, defaults to :code:`days`.
     """
 
-
+    VALID_TIME_UNITS = ("milliseconds", "seconds", "minutes",
+        "hours", "days", "weeks", "months", "years")
+    """Possible values for the property :code:`time_unit`.
+    """
     _aeval = Interpreter()
-    _system_states = []
+    """TODO"""
 
-    @classmethod
-    def run_simulation(cls, system):
+    def __init__(self, simulation_steps = 10, time_unit = "days", dt=0.05):
+        self.simulation_steps = simulation_steps
+        self.time_unit = time_unit
+        self.dt = dt
+        self._system_states = []
+
+
+    def run_simulation(self, system):
         """TODO
         """
 
@@ -26,7 +42,7 @@ class Simulator(utils.SubclassOnlyABC):
         more to get the required number of steps
         """
         print("Simulation started")
-        for i in range(int(system.simulation_steps / system.dt)+1):
+        for i in range(int(self.simulation_steps / self.dt)+1):
             
             # make a deep copy of the current system state
             system_backup = copy.deepcopy(system)
@@ -38,7 +54,7 @@ class Simulator(utils.SubclassOnlyABC):
                     try:
                         # update system state
                         system.system_elements[idx].value = \
-                            cls._calculate_dynamic_value(elem)
+                            Simulator._calculate_dynamic_value(elem)
                     except TypeError as t:
                         raise t
 
@@ -46,40 +62,40 @@ class Simulator(utils.SubclassOnlyABC):
             if i == 0:
                 # in the first iteration only store the initial system state
                 system_backup = copy.deepcopy(system)
-                cls._system_states.append(system_backup)
+                self.system_states.append(system_backup)
                 continue
 
             # store copy of system state every 1 / dt steps
             # example: dt = 0.05 --> every 20 steps
-            if i % (1 / system.dt) == 0:
-                cls._system_states.append(system_backup)
+            if i % (1 / self.dt) == 0:
+                self.system_states.append(system_backup)
 
             # now calculate stocks
             for idx, elem in enumerate(system.system_elements):
                 current_stock_value = system.system_elements[idx].value
                 if "Stock" in str(type(elem)):
                     try:
-                        change = cls._calculate_stock_change(elem)
-                        system.system_elements[idx].value = current_stock_value + change * system.dt
+                        change = Simulator._calculate_stock_change(elem)
+                        system.system_elements[idx].value = current_stock_value + change * self.dt
                     except TypeError as t:
                         raise t
             
         print("Simulation finished")
 
-    @classmethod
-    def get_simulation_results(cls):
+
+    def get_simulation_results(self):
         """[summary]
 
         :return: [description]
         :rtype: [type]
         """
-        if not cls._system_states: # empty
+        if not self.system_states: # empty
             return None
         else:
             result = {}
             # create dict from list of system states
             # for each state
-            for state in cls._system_states:
+            for state in self.system_states:
                 # iterate system elements
                 for element in state.system_elements:
                     if element.name not in result:
@@ -152,3 +168,52 @@ class Simulator(utils.SubclassOnlyABC):
             raise TypeError("The result of is not numeric. Is is: " + str(result))
         else:
             return result
+
+    @property
+    def simulation_steps(self):
+        """int: The number of steps for the simulation.
+        """
+        return self._simulation_steps
+
+
+    @property
+    def time_unit(self):
+        """str: Defines the time period of one simulation step.
+        The value must be one of the values defines in :code:`VALID_TIME_UNITS`
+        """
+        return self._time_unit
+    
+
+    @property
+    def dt(self):
+        """TODO
+        """
+        return self._dt
+    
+
+    @property
+    def system_states(self):
+        return self._system_states
+
+
+    @simulation_steps.setter
+    def simulation_steps(self, value):
+        if value > 0:
+            self._simulation_steps = value
+        else:
+            raise ValueError("simulation_steps must be positive.")
+
+
+    @time_unit.setter
+    def time_unit(self, value):
+        if value.strip().lower() in Simulator.VALID_TIME_UNITS:
+            self._time_unit = value.strip().lower()
+        else:
+            raise ValueError("name can not be empty")
+    
+
+    @dt.setter
+    def dt(self, value):
+        if 0 < value and value <= 1:
+            self._dt = value
+

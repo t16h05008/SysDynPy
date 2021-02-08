@@ -16,7 +16,7 @@ The corresponding simulation diagram can be found in the file
 
 # create system
 number_of_simulation_steps = 200
-lv_system = System("lotka-volterra", number_of_simulation_steps, "weeks")
+lv_system = System("lotka-volterra")
 
 # create elements
 raeuber = Stock("Räuber", 40, lv_system)
@@ -56,10 +56,12 @@ beute.calc_rule = "Beutezuwachs - Beuteverlust"
 beutezuwachs.calc_rule = "WACHSTUMSRATE_BEUTE * Beute"
 beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
 
-Simulator.run_simulation(lv_system) # run simulation
-# returns a dict
+# run simulation
+s1 = Simulator(number_of_simulation_steps, "weeks")
+s1.run_simulation(lv_system) 
+# get_simulation_results() returns a dict
 # Key = Name of the system element, Value = List of Values
-sim_results = Simulator.get_simulation_results()
+sim_results = s1.get_simulation_results()
 # pprint.pprint(sim_results) # print formatted results to console
 
 # export results to various formats

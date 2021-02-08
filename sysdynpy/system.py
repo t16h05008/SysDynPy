@@ -3,27 +3,13 @@ class System(object):
 
     :param name: The system name
     :type name: str, required
-    :param simulation_steps: The number of steps to simulate 
-        when run_simulation() is called, defaults to 10
-    :type simulation_steps: int, optional
-    :param time_unit: Defines the time period of one simulation step.
-        The value must be one of the values defines in :code:`VALID_TIME_UNITS`
-    :type time_unit: str, optional, defaults to :code:`days`.
+
     """
 
-    VALID_TIME_UNITS = ("milliseconds", "seconds", "minutes",
-        "hours", "days", "weeks", "months", "years")
-    """Possible values for the property :code:`time_unit`.
-    """
-    
-
-    def __init__(self, name="", simulation_steps = 10, time_unit = "days", dt=0.05):
+    def __init__(self, name=""):
         """Constructor method
         """
         self.name = name
-        self.simulation_steps = simulation_steps
-        self.time_unit = time_unit
-        self.dt = dt
         self._system_elements = []
         """private list of system elements
         """
@@ -56,37 +42,11 @@ class System(object):
             s += "}\n"
         print(s)
 
-    # TODO saveSimulationResults csv, jpg/png
-    # TODO "print"
-
-    # TODO "export"
-
 
     @property
     def name(self):
         """str: The name of the system."""
         return self._name
-
-
-    @property
-    def simulation_steps(self):
-        """int: The number of steps for the simulation.
-        """
-        return self._simulation_steps
-
-
-    @property
-    def time_unit(self):
-        """str: Defines the time period of one simulation step.
-        The value must be one of the values defines in :code:`VALID_TIME_UNITS`
-        """
-        return self._time_unit
-    
-    @property
-    def dt(self):
-        """TODO
-        """
-        return self._dt
 
 
     @property
@@ -101,37 +61,3 @@ class System(object):
             self._name = value
         else:
             raise ValueError("name can not be empty")
-
-
-    @simulation_steps.setter
-    def simulation_steps(self, value):
-        if value > 0:
-            self._simulation_steps = value
-        else:
-            raise ValueError("simulation_steps must be positive.")
-
-
-    @time_unit.setter
-    def time_unit(self, value):
-        if value.strip().lower() in System.VALID_TIME_UNITS:
-            self._time_unit = value.strip().lower()
-        else:
-            raise ValueError("name can not be empty")
-    
-    @dt.setter
-    def dt(self, value):
-        if 0 < value and value <= 1:
-            self._dt = value
-
-
-    def __str__(self):
-        """Creates and returns a string representation of the system.
-
-        :return: The result string
-        :rtype: str
-        """
-        s = ""
-        s += "{ name: " + self.name \
-            + ", simulation_steps: " + str(self.simulation_steps) \
-            + ", time_unit: " + self.time_unit + " }"
-        return s

@@ -6,6 +6,12 @@ class SystemElement(utils.SubclassOnlyABC):
     """some class """
 
     def __init__(self, name, value, system):
+        """Constructor method.
+
+        As this is an abstract class this constructor can not be called directly.
+        But it provides a way to bundle code that needs to run when a subclass
+        instance is created.
+        """
         self.name = name
         self.value = value
         self.system = system

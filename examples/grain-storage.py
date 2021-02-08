@@ -22,7 +22,7 @@ Note that elements are named slightly different.
 
 # create system
 number_of_simulation_steps = 100
-grain_storage_system = System("grain-storage", number_of_simulation_steps, "weeks")
+grain_storage_system = System("Grain Stock Storage")
 
 # create elements
 grain_on_order = Stock("grain on order", 10000, grain_storage_system)
@@ -52,10 +52,12 @@ receiving_rate.calc_rule = "grain on order/RECEIVING DELAY"
 grain_stock.calc_rule = "receiving rate - release rate"
 release_rate.calc_rule = "grain stock*RELEASE FRACTION"
 
-Simulator.run_simulation(grain_storage_system) # run simulation
-# returns a dict
+# run simulation
+s1 = Simulator(number_of_simulation_steps, "weeks")
+s1.run_simulation(grain_storage_system) 
+# get_simulation_results() returns a dict
 # Key = Name of the system element, Value = List of Values
-sim_results = Simulator.get_simulation_results()
+sim_results = s1.get_simulation_results()
 # pprint.pprint(sim_results) # print formatted results to console
 
 # export results to various formats
@@ -71,6 +73,6 @@ Exporter.export_data(results=sim_results, file_format="json", \
 Exporter.export_graph(results=sim_results, file_format="png", \
     system_elements=["procurement rate", "receiving rate", "grain stock", "DESIRED GRAIN STOCK"], \
     rel_path="results/grain-stock-storage-results.png", \
-    title="Grain Stock Storage", label_x="t[weeks]", label_y="Grain",
+    title=grain_storage_system.name, label_x="t[weeks]", label_y="Grain",
     range_x=[0,number_of_simulation_steps], range_y=[-500,8100], colors=["blue", "red", "purple", "green"],
     line_width=2, legend_pos="upper right")
