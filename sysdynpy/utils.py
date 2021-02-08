@@ -27,7 +27,7 @@ def _check_if_system_element_name_is_unique(name, system):
     for element in system.system_elements:
         if element.name == name:
             raise ValueError("A system element with this name already exists" \
-            + "in system '" + system.name + "'")
+            + " in system '" + system.name + "'")
 
 
 def _validate_calc_rule(calc_rule, element):

@@ -70,7 +70,7 @@ Exporter.export_data(results=sim_results, file_format="csv", \
 Exporter.export_data(results=sim_results, file_format="json", \
     system_elements=["Räuber", "Beute"], rel_path=".\\results\\lotka-volterra-results.json")
 
-Exporter.export_graph(results=sim_results, file_format="png", \
+Exporter.export_graph(results=sim_results, file_format="jpg", \
     system_elements=["Räuber", "Beute"], rel_path="results/lotka-volterra-results", \
     title="Lotka-Volterra-Simulation", label_x="t[weeks]", label_y="Number of Animals",
     range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["red", "blue"],

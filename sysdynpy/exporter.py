@@ -65,6 +65,7 @@ class Exporter(utils.SubclassOnlyABC):
         plt.legend(loc=legend_pos)
         #plt.show()
         plt.savefig(out_path)
+        plt.clf()
 
     @classmethod
     def _prepare_export(cls, results, file_format, system_elements, rel_path):
