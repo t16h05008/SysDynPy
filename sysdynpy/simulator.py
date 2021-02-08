@@ -1,8 +1,8 @@
 import time
 import copy
 from asteval import Interpreter
-
 import numbers
+
 import sysdynpy.utils as utils
 
 
@@ -25,8 +25,9 @@ class Simulator(utils.SubclassOnlyABC):
         flows are calculated, but nothing else changes. So we need one iteration
         more to get the required number of steps
         """
+        print("Simulation started")
         for i in range(int(system.simulation_steps / system.dt)+1):
-
+            
             # make a deep copy of the current system state
             system_backup = copy.deepcopy(system)
 
@@ -63,7 +64,7 @@ class Simulator(utils.SubclassOnlyABC):
                     except TypeError as t:
                         raise t
             
-            
+        print("Simulation finished")
 
     @classmethod
     def get_simulation_results(cls):

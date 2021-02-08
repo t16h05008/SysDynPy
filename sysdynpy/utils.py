@@ -56,7 +56,7 @@ def _validate_calc_rule(calc_rule, element):
     :returns: nothing.
     :rtype: None
     """
-
+    
     input_elements = element.input_elements
 
     calc_rule = calc_rule.strip()
@@ -75,7 +75,7 @@ def _validate_calc_rule(calc_rule, element):
     # remove spaces
     calc_rule = calc_rule.replace(" ", "")
     # only allow + - * / as additional characters
-    if not re.match('^[0-9\+\-\*\/]*$', calc_rule):
+    if not re.match('^[0-9\+\-\*\/\(\)]*$', calc_rule):
         raise ValueError("Unsupported mathematical operation."\
             " Only + - * and / are allowed.")
 

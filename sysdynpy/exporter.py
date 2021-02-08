@@ -63,8 +63,8 @@ class Exporter(utils.SubclassOnlyABC):
         plt.xlim(range_x)
         plt.ylim(range_y)
         plt.legend(loc=legend_pos)
-        plt.show()
-        # plt.savefig(out_path)
+        #plt.show()
+        plt.savefig(out_path)
 
     @classmethod
     def _prepare_export(cls, results, file_format, system_elements, rel_path):
@@ -131,7 +131,7 @@ def _check_if_system_elements_in_results(results, system_elements):
     for element in system_elements:
         if element not in results.keys():
             raise ValueError("Given system element "
-                + element.name + " is not in simulation results")
+                + element + " is not in simulation results")
 
 
 def _filter_results(results, system_elements):

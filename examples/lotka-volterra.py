@@ -8,7 +8,11 @@ from sysdynpy.parameter import *
 from sysdynpy.simulator import *
 from sysdynpy.exporter import *
 
-# This example implements the Lotka-Volterra model.
+"""
+This example implements the Lotka-Volterra model.
+The corresponding simulation diagram can be found in the file
+"simulation-diagram-lotka-volterra.png".
+"""
 
 # create system
 number_of_simulation_steps = 200
@@ -56,19 +60,24 @@ Simulator.run_simulation(lv_system) # run simulation
 # returns a dict
 # Key = Name of the system element, Value = List of Values
 sim_results = Simulator.get_simulation_results()
-pprint.pprint(sim_results) # print formatted results to console
+# pprint.pprint(sim_results) # print formatted results to console
 
 # export results to various formats
+# make sure the subfolder "results" exists or change the relative path
 Exporter.export_data(results=sim_results, file_format="csv", \
-    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results.csv")
+    system_elements=["Räuber", "Beute"], rel_path="./results/lotka-volterra-results.csv")
 
 Exporter.export_data(results=sim_results, file_format="json", \
-    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results.json")
+    system_elements=["Räuber", "Beute"], rel_path=".\\results\\lotka-volterra-results.json")
 
 Exporter.export_graph(results=sim_results, file_format="png", \
-    system_elements=["Räuber", "Beute"], rel_path="./lotka-volterra-results", \
+    system_elements=["Räuber", "Beute"], rel_path="results/lotka-volterra-results", \
     title="Lotka-Volterra-Simulation", label_x="t[weeks]", label_y="Number of Animals",
     range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["red", "blue"],
     line_width=2, legend_pos="upper right")
 
-#Exporter.export_graph(sim_results, "jpg", ["Beute", "Räuber"], "./lotka-volterra-results.jpg")
+Exporter.export_graph(results=sim_results, file_format="png", \
+    system_elements=["Beute", "Räuber"], rel_path="results\\lotka-volterra-results", \
+    title="Lotka-Volterra-Simulation", label_x="t[weeks]", label_y="Number of Animals",
+    range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["green", "orange"],
+    line_width=2, legend_pos="upper left")
