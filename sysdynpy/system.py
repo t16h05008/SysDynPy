@@ -1,17 +1,20 @@
 class System(object):
     """This class represents a System Dynamics system/model.
 
-    :param name: The system name
-    :type name: str, required
-
+    It maintains a list of the system elements (:py:attr:`~_system_elements`).
     """
 
-    def __init__(self, name=""):
-        """Constructor method
+    def __init__(self, name):
+        """Constructor method.
+
+        :param name: The name of the system.
+        :type name: str, optional
         """
         self.name = name
         self._system_elements = []
-        """private list of system elements
+        """ A list of system elements.
+        
+        :type: list
         """
 
 
@@ -26,7 +29,7 @@ class System(object):
         """
         s = ""
         s += "==== " + self.name + " ====\n"
-        for element in self.system_elements:
+        for element in self._system_elements:
             s += "{ name: " + element.name \
                 + ", value: " + str(element.value)
             if hasattr(element, "calc_rule"):
@@ -45,14 +48,9 @@ class System(object):
 
     @property
     def name(self):
-        """str: The name of the system."""
+        """see :py:meth:`~__init__`
+        """
         return self._name
-
-
-    @property
-    def system_elements(self):
-        """list: A list that maintains all elements currently in the system."""
-        return self._system_elements
 
 
     @name.setter

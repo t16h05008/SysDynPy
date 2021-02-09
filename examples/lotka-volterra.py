@@ -14,8 +14,9 @@ The corresponding simulation diagram can be found in the file
 "simulation-diagram-lotka-volterra.png".
 """
 
-# create system
 number_of_simulation_steps = 200
+
+# create system
 lv_system = System("lotka-volterra")
 
 # create elements
@@ -36,13 +37,16 @@ treffen = DynamicVariable("Treffen", lv_system)
 
 # link elements
 raeuber.input_elements.extend([raeuberzuwachs, energieverluste])
+
 raeuberzuwachs.input_elements.extend([ZUWACHSRATE_RAEUBER, treffen])
 energieverluste.input_elements.extend([ENERGIEVERLUSTRATE_RAEUBER, raeuber])
 
 treffen.input_elements.extend([beute, raeuber])
 
 beute.input_elements.extend([beutezuwachs, beuteverlust])
+
 beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
+
 beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
 
 # set calculation rules
@@ -58,9 +62,9 @@ beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")
-s1.run_simulation(lv_system) 
+s1.run_simulation(lv_system)
 # get_simulation_results() returns a dict
-# Key = Name of the system element, Value = List of Values
+# Key = Name of the system element, Value = List of numerical values
 sim_results = s1.get_simulation_results()
 # pprint.pprint(sim_results) # print formatted results to console
 

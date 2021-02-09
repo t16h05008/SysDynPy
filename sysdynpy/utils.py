@@ -1,18 +1,17 @@
 from abc import ABC, ABCMeta, abstractmethod
 import re
 
-"""This module provides utility methods and classes for internal use
+"""This module provides utility methods and classes for internal use.
 """
 
 class SubclassOnlyABC(object):
     """Helper class to prevent instantiation.
-    The class SysDynPy is declared as abstract and should not be instantiated.
-    However, because there are no abstract methods present, it could be
+    Some classes are declared as abstract and should not be instantiated.
+    However, if there are no abstract methods present, they could be
     instantiated.
     
-    By deriving SysDynPy from this class we ensure that no instances can be
+    By deriving these classes from this class we ensure that no instances can be
     created. This is done by overriding the __new__ method.
-    For more info see: https://stackoverflow.com/questions/50099600/abstract-classes-without-abstract-methods-creating-objects-in-python
      """
     __metaclass__ = ABCMeta
 
@@ -23,8 +22,54 @@ class SubclassOnlyABC(object):
         return super(SubclassOnlyABC, cls).__new__(cls)
 
 
+class extend_docstring:
+    """ Helper class to inherit method docstrings.
+
+    This class can be used as a method-decorator. The docstring of the superclass
+    for that method will be prepended to the actual docstring in the subclass.
+    That way, documentation can be reused and is not redundant.
+
+    In addition to that documentation between the strings :code:`\\u00A0` will be removed.
+    This is useful for documentation that is only meant for the superclass
+    (e.g. that it is abstract). :code:`\\u00A0` is a non-printable character so it will
+    not be included in the documentation of the superclass (because it is parsed
+    as a utf-8 string).
+
+    Example:
+
+    |  '''
+    |  This is the docstring in the superclass.
+    |  :code:`\\u00A0`
+    |  This part will not be included in the subclass documentation
+    |  :code:`\\u00A0`
+    |  But this part will.
+    |  '''
+    """
+    def __init__(self, method):
+        self.doc = method.__doc__
+
+    def __call__(self, function):
+        if self.doc is not None:
+            # remove private docstrings
+            self.doc = re.sub(u'\\u00A0.*?\\u00A0', '', self.doc, flags=re.UNICODE | re.DOTALL)
+            
+            doc = function.__doc__
+            function.__doc__ = self.doc
+            if doc is not None:
+                function.__doc__ += doc
+        return function
+
+
 def _check_if_system_element_name_is_unique(name, system):
-    for element in system.system_elements:
+    """Checks if a system element name is unique within a system.
+
+    :param name: Name to check
+    :type name: str
+    :param system: The system that provides access to other system element names
+    :type system: System
+    :raises ValueError: If the name is not unique
+    """
+    for element in system._system_elements:
         if element.name == name:
             raise ValueError("A system element with this name already exists" \
             + " in system '" + system.name + "'")
@@ -34,6 +79,7 @@ def _validate_calc_rule(calc_rule, element):
     """Validates the syntax for a given calculation rule.
 
     There are two requirements:
+    
         1. Each input element has to be used in the calculation rule
         2. Only basic arithmetic operations are allowed (for now).
     
@@ -41,22 +87,25 @@ def _validate_calc_rule(calc_rule, element):
     the string at arithmetic operators is not possible. Instead this method
     replaces each input element by its index in the list.
 
-    "some-element-name*some-other+name" --> "0*1" (or "1*0")
+    Example:
+
+        "some-element-name*some-other+name" --> "0*1" (or "1*0")
 
     Once the string is transformed like this it is possible to check if all
     characters are either numbers, brackets or one of the supported arithmetic operations.
 
-    This method does NOT check if brackets are set correctly.
+    This method does **not** check if brackets are set correctly.
+
+    This method doesn't return anything. If no exception is thrown the calculation
+    rule is valid.
 
     :param value: The calculation rule to validate
     :type value: str
     :param element: The system element to validate the calculation rule for.
-    :type element: Subclass of SystemElement
-    :raises ValueError: If the calculation does not use all input elements
+    :type element: Subclass of :class:`.sysdynpy.systemelement.SystemElement`
+    :raises ValueError: If the calculation does not use all input elements.
     :raises ValueError: If an unsupported mathematical operation is given.
-        Supported operations are + - * and /.
-    :returns: nothing.
-    :rtype: None
+        Supported operations are :code:`+ - * /`.
     """
     
     input_elements = element.input_elements
@@ -76,7 +125,7 @@ def _validate_calc_rule(calc_rule, element):
 
     # remove spaces
     calc_rule = calc_rule.replace(" ", "")
-    # only allow + - * / as additional characters
+    # only allow + - * / ( ) as additional characters
     if not re.match('^[0-9\+\-\*\/\(\)]*$', calc_rule):
         raise ValueError("Unsupported mathematical operation."\
             " Only + - * and / are allowed.")
