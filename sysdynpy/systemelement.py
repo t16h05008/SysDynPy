@@ -13,11 +13,10 @@ class SystemElement(utils.SubclassOnlyABC):
         # docstrings. This is done in the class 'extend_docstring' in the utils
         # module.
         """Constructor method.
-        \u00A0
+
         As this is an abstract class this constructor **can not be called** directly.
         But it provides a way to bundle code that needs to run when a subclass
         instance is created.
-        \u00A0
 
         :param name: The element name. Can not be empty. Must be unique within the system.
         :type name: str

@@ -22,44 +22,6 @@ class SubclassOnlyABC(object):
         return super(SubclassOnlyABC, cls).__new__(cls)
 
 
-class extend_docstring:
-    """ Helper class to inherit method docstrings.
-
-    This class can be used as a method-decorator. The docstring of the superclass
-    for that method will be prepended to the actual docstring in the subclass.
-    That way, documentation can be reused and is not redundant.
-
-    In addition to that documentation between the strings :code:`\\u00A0` will be removed.
-    This is useful for documentation that is only meant for the superclass
-    (e.g. that it is abstract). :code:`\\u00A0` is a non-printable character so it will
-    not be included in the documentation of the superclass (because it is parsed
-    as a utf-8 string).
-
-    Example:
-
-    |  '''
-    |  This is the docstring in the superclass.
-    |  :code:`\\u00A0`
-    |  This part will not be included in the subclass documentation
-    |  :code:`\\u00A0`
-    |  But this part will.
-    |  '''
-    """
-    def __init__(self, method):
-        self.doc = method.__doc__
-
-    def __call__(self, function):
-        if self.doc is not None:
-            # remove private docstrings
-            self.doc = re.sub(u'\\u00A0.*?\\u00A0', '', self.doc, flags=re.UNICODE | re.DOTALL)
-            
-            doc = function.__doc__
-            function.__doc__ = self.doc
-            if doc is not None:
-                function.__doc__ += doc
-        return function
-
-
 def _check_if_system_element_name_is_unique(name, system):
     """Checks if a system element name is unique within a system.
 

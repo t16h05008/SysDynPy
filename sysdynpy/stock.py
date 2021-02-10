@@ -8,11 +8,16 @@ class Stock(SystemElement):
     Stocks are also known as levels.
     """
 
-    @utils.extend_docstring(SystemElement.__init__) # prepend docstring from superclass
+
     def __init__(self, name, value, system, input_elements=[]):
-        """
+        """Constructor method.
+
+        :param name: The element name. Can not be empty. Must be unique within the system.
+        :type name: str
         :param value: The numeric value that is used in calculations.
         :type value: int or float
+        :param system: The system that this element shall be part of.
+        :type system: System
         :param input_elements: The system elements needed to calculate the
             value for this element (usually connected by arrows in a simulation
             diagram), defaults to an empty list
