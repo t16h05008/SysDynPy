@@ -212,7 +212,7 @@ class Simulator(object):
         result = cls._aeval(calc_rule)
 
         if not isinstance(result, numbers.Number):
-            raise TypeError("The result of is not numeric. Is is: " + str(result))
+            raise TypeError("The result is not numeric. Is is: " + str(result))
         else:
             return result
 
