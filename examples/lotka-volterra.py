@@ -39,28 +39,25 @@ encounters = DynamicVariable("encounters", lv_system, "encounters")
 
 # link elements
 predators.input_elements.extend([increase_in_predators, energy_loss])
+prey.input_elements.extend([increase_in_prey, decrease_in_prey])
 
+increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
+decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
 increase_in_predators.input_elements.extend([GROWTH_RATE_PREDATORS, encounters])
 energy_loss.input_elements.extend([ENERGY_LOSS_RATE_PREDATORS, predators])
 
 encounters.input_elements.extend([prey, predators])
 
-prey.input_elements.extend([increase_in_prey, decrease_in_prey])
-
-increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
-
-decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
-
 # set calculation rules
 predators.calc_rule = lambda: increase_in_predators - energy_loss
+prey.calc_rule = lambda: increase_in_prey - decrease_in_prey
+
+increase_in_prey.calc_rule = lambda: GROWTH_RATE_PREY * prey
+decrease_in_prey.calc_rule = lambda: LOSS_RATE_PREY * encounters
 increase_in_predators.calc_rule = lambda: encounters * GROWTH_RATE_PREDATORS
 energy_loss.calc_rule = lambda: ENERGY_LOSS_RATE_PREDATORS * predators
 
 encounters.calc_rule = lambda: prey * predators
-
-prey.calc_rule = lambda: increase_in_prey - decrease_in_prey
-increase_in_prey.calc_rule = lambda: GROWTH_RATE_PREY * prey
-decrease_in_prey.calc_rule = lambda: LOSS_RATE_PREY * encounters
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")

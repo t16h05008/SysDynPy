@@ -37,28 +37,25 @@ treffen = DynamicVariable("Treffen", lv_system, "treffen")
 
 # link elements
 raeuber.input_elements.extend([raeuberzuwachs, energieverluste])
+beute.input_elements.extend([beutezuwachs, beuteverlust])
 
+beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
+beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
 raeuberzuwachs.input_elements.extend([ZUWACHSRATE_RAEUBER, treffen])
 energieverluste.input_elements.extend([ENERGIEVERLUSTRATE_RAEUBER, raeuber])
 
 treffen.input_elements.extend([beute, raeuber])
 
-beute.input_elements.extend([beutezuwachs, beuteverlust])
-
-beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
-
-beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
-
 # set calculation rules
 raeuber.calc_rule = lambda: raeuberzuwachs - energieverluste
+beute.calc_rule = lambda: beutezuwachs - beuteverlust
+
+beutezuwachs.calc_rule = lambda: WACHSTUMSRATE_BEUTE * beute
+beuteverlust.calc_rule = lambda: VERLUSTRATE_BEUTE * treffen
 raeuberzuwachs.calc_rule = lambda: treffen * ZUWACHSRATE_RAEUBER
 energieverluste.calc_rule = lambda: ENERGIEVERLUSTRATE_RAEUBER * raeuber
 
 treffen.calc_rule = lambda: beute * raeuber
-
-beute.calc_rule = lambda: beutezuwachs - beuteverlust
-beutezuwachs.calc_rule = lambda: WACHSTUMSRATE_BEUTE * beute
-beuteverlust.calc_rule = lambda: VERLUSTRATE_BEUTE * treffen
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")

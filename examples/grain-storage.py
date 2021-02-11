@@ -38,17 +38,19 @@ receiving_rate = Flow("receiving rate", gs_system, "receiving_rate")
 release_rate = Flow("release rate", gs_system, "release_rate")
 
 # link elements
-procurement_rate.input_elements.extend([ADJUSTMENT_DELAY, DESIRED_GRAIN_STOCK, grain_stock])
 grain_on_order.input_elements.extend([procurement_rate, receiving_rate])
-receiving_rate.input_elements.extend([grain_on_order, RECEIVING_DELAY])
 grain_stock.input_elements.extend([receiving_rate, release_rate])
+
+procurement_rate.input_elements.extend([ADJUSTMENT_DELAY, DESIRED_GRAIN_STOCK, grain_stock])
+receiving_rate.input_elements.extend([grain_on_order, RECEIVING_DELAY])
 release_rate.input_elements.extend([grain_stock, RELEASE_FRACTION])
 
 # set calculation rules
-procurement_rate.calc_rule = lambda: (DESIRED_GRAIN_STOCK - grain_stock)/ADJUSTMENT_DELAY
 grain_on_order.calc_rule = lambda: procurement_rate-receiving_rate
-receiving_rate.calc_rule = lambda: grain_on_order/RECEIVING_DELAY
 grain_stock.calc_rule = lambda: receiving_rate - release_rate
+
+procurement_rate.calc_rule = lambda: (DESIRED_GRAIN_STOCK - grain_stock)/ADJUSTMENT_DELAY
+receiving_rate.calc_rule = lambda: grain_on_order/RECEIVING_DELAY
 release_rate.calc_rule = lambda: grain_stock*RELEASE_FRACTION
 
 # run simulation
