@@ -1,7 +1,7 @@
 import time
 import copy
-from asteval import Interpreter
 import numbers
+
 
 import sysdynpy.utils as utils
 
@@ -14,11 +14,6 @@ class Simulator(object):
     VALID_TIME_UNITS = ("milliseconds", "seconds", "minutes",
         "hours", "days", "weeks", "months", "years")
     """Possible values for the property :code:`time_unit`.
-    """
-    _aeval = Interpreter()
-    """An Interpreter to evaluate python expressions. It is intentionally
-    limited to arithmetic operations for security reasons.
-    Further documentionen: `asteval <https://github.com/newville/asteval>`__
     """
 
     def __init__(self, simulation_steps = 10, time_unit = "days", dt=0.05):
@@ -65,6 +60,7 @@ class Simulator(object):
         """
 
         print("Simulation started")
+
         """
         In the initial iteration values for dynamic variables and
         flows are calculated, but nothing else changes. So we need one iteration
@@ -76,41 +72,37 @@ class Simulator(object):
             # make a deep copy of the current system state
             system_backup = copy.deepcopy(system)
 
-            # calculate dynamic variables and flows from parameters and stocks
-            # use the backed-up system as source but update the actual system
+            # iterate all system elements
             for idx, elem in enumerate(system_backup._system_elements):
+                # for flows and dynamic variables
                 if "Flow" in str(type(elem)) or "DynamicVariable" in str(type(elem)):
-                    try:
-                        # update system state
-                        system._system_elements[idx].value = \
-                            Simulator._calculate_dynamic_value(elem)
-                    except TypeError as t:
-                        raise t
+                    # set the calculated value directly
+                    system._system_elements[idx].value = \
+                        Simulator._calculate_value(elem)
+                else:
+                    pass # for parameters and stocks
 
-            
             if i == 0:
                 # in the first iteration only store the initial system state
                 system_backup = copy.deepcopy(system)
                 self._system_states.append(system_backup)
                 continue
 
+            # for stocks 
+            for idx, elem in enumerate(system_backup._system_elements):
+                if  "Stock" in str(type(elem)):
+                    current_stock_value = system._system_elements[idx].value
+                    change = Simulator._calculate_stock_change(elem)
+                    system._system_elements[idx].value = current_stock_value + change * self.dt
+
             # store copy of system state every 1 / dt steps
             # example: dt = 0.05 --> every 20 steps
             if i % (1 / self.dt) == 0:
                 self._system_states.append(system_backup)
 
-            # now calculate stocks
-            for idx, elem in enumerate(system._system_elements):
-                current_stock_value = system._system_elements[idx].value
-                if "Stock" in str(type(elem)):
-                    try:
-                        change = Simulator._calculate_stock_change(elem)
-                        system._system_elements[idx].value = current_stock_value + change * self.dt
-                    except TypeError as t:
-                        raise t
-            
         print("Simulation finished")
 
+        
 
     def get_simulation_results(self):
         """Provides the trajectories of all system elements during the
@@ -150,7 +142,7 @@ class Simulator(object):
 
     
     @classmethod
-    def _calculate_dynamic_value(cls, element):
+    def _calculate_value(cls, element):
         """Calculates the values for a given element based on the calculation rule.
 
         This is a recursive function to calculate the value of a flow or
@@ -160,61 +152,36 @@ class Simulator(object):
 
         :param element: The element to calculate a value for.
         :type element: Flow or DynamicVariable
-        :raises TypeError: If the calculation rule does not evaluate to a numerical result
         :return: The calculated value
         :rtype: float
         """
-        result = None
         calc_rule = element.calc_rule
 
-        # for each input element
-        for idx, inp_elem in enumerate(element.input_elements):
-            # check its type
+        temp_dict = {}
+        for inp_elem in element.input_elements:
             if "Stock" in str(type(inp_elem)) or "Parameter" in str(type(inp_elem)):
-                # if stock or parameter replace name in calculation rule
-                calc_rule = \
-                    calc_rule.replace(inp_elem.name, str(inp_elem.value))
+                temp_dict[inp_elem.var_name] = inp_elem.value
             else:
-                # else call this function again and replace name with result
-                # print("calling recursive function for input element " + inp_elem.name + " of element " + element.name)
-                calc_rule = \
-                    calc_rule.replace(inp_elem.name, str(cls._calculate_dynamic_value(inp_elem)))
+                temp_dict[inp_elem.var_name] = cls._calculate_value(inp_elem)
+        
+        for key in temp_dict:
+            calc_rule.__globals__[key] = temp_dict[key]
 
-        # calculate value
-        result = cls._aeval(calc_rule)
-
-        if not isinstance(result, numbers.Number):
-            raise TypeError("The result of is not numeric. Is is: " + str(result))
-        else:
-            return result
+        return calc_rule()
 
     @classmethod
-    def _calculate_stock_change(cls, stock):
-        """Calculates the values for a given stock based on the calculation rule.
+    def _calculate_stock_change(cls, element):
+        calc_rule = element.calc_rule
 
-        Unlike with :py:meth:`~_calculate_dynamic_value` no recursion is needed here.
+        temp_dict = {}
+        for inp_elem in element.input_elements:
+                temp_dict[inp_elem.var_name] = inp_elem.value
+        
+        for key in temp_dict:
+            calc_rule.__globals__[key] = temp_dict[key]
 
-        :param stock: The stock to calculate a value for.
-        :type stock: Stock
-        :raises TypeError: If the calculation rule does not evaluate to a numerical result
-        :return: The calculated value
-        :rtype: float
-        """
-        result = None
-        calc_rule = stock.calc_rule
+        return calc_rule()
 
-        # for each input element
-        for idx, inp_elem in enumerate(stock.input_elements):
-            # replace name in calculation rule
-            calc_rule = calc_rule.replace(inp_elem.name, str(inp_elem.value))
-
-        # calculate value
-        result = cls._aeval(calc_rule)
-
-        if not isinstance(result, numbers.Number):
-            raise TypeError("The result is not numeric. Is is: " + str(result))
-        else:
-            return result
 
     @property
     def simulation_steps(self):

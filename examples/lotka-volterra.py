@@ -20,20 +20,22 @@ number_of_simulation_steps = 200
 lv_system = System("lotka-volterra")
 
 # create elements
-predators = Stock("Predators", 40, lv_system)
-prey = Stock("Prey", 500, lv_system)
+predators = Stock("Predators", 40, lv_system, "predators")
+prey = Stock("Prey", 500, lv_system, "prey")
 
-GROWTH_RATE_PREY = Parameter("GROWTH_RATE_PREY", 0.05, lv_system)
-LOSS_RATE_PREY = Parameter("LOSS_RATE_PREY", 0.001, lv_system)
-GROWTH_RATE_PREDATORS = Parameter("GROWTH_RATE_PREDATORS", 0.0002, lv_system)
-ENERGY_LOSS_RATE_PREDATORS = Parameter("ENERGY_LOSS_RATE_PREDATORS", 0.1, lv_system)
+GROWTH_RATE_PREY = Parameter("GROWTH RATE PREY", 0.05, lv_system, "GROWTH_RATE_PREY")
+LOSS_RATE_PREY = Parameter("LOSS RATE PREY", 0.001, lv_system, "LOSS_RATE_PREY")
+GROWTH_RATE_PREDATORS = Parameter("GROWTH RATE PREDATORS", 0.0002, lv_system, \
+    "GROWTH_RATE_PREDATORS")
+ENERGY_LOSS_RATE_PREDATORS = Parameter("ENERGY LOSS RATE PREDATORS", 0.1, lv_system, \
+    "ENERGY_LOSS_RATE_PREDATORS")
 
-increase_in_prey = Flow("increase_in_prey", lv_system)
-decrease_in_prey = Flow("decrease_in_prey", lv_system)
-increase_in_predators = Flow("increase_in_predators", lv_system)
-energy_loss = Flow("energy_loss", lv_system)
+increase_in_prey = Flow("increase in prey", lv_system, "increase_in_prey")
+decrease_in_prey = Flow("decrease in prey", lv_system, "decrease_in_prey")
+increase_in_predators = Flow("increase in predators", lv_system, "increase_in_predators")
+energy_loss = Flow("energy loss", lv_system, "energy_loss")
 
-encounters = DynamicVariable("encounters", lv_system)
+encounters = DynamicVariable("encounters", lv_system, "encounters")
 
 # link elements
 predators.input_elements.extend([increase_in_predators, energy_loss])
@@ -50,15 +52,15 @@ increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
 decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
 
 # set calculation rules
-predators.calc_rule = "increase_in_predators - energy_loss"
-increase_in_predators.calc_rule = "encounters * GROWTH_RATE_PREDATORS"
-energy_loss.calc_rule = "ENERGY_LOSS_RATE_PREDATORS * Predators"
+predators.calc_rule = lambda: increase_in_predators - energy_loss
+increase_in_predators.calc_rule = lambda: encounters * GROWTH_RATE_PREDATORS
+energy_loss.calc_rule = lambda: ENERGY_LOSS_RATE_PREDATORS * predators
 
-encounters.calc_rule = "Prey * Predators"
+encounters.calc_rule = lambda: prey * predators
 
-prey.calc_rule = "increase_in_prey - decrease_in_prey"
-increase_in_prey.calc_rule = "GROWTH_RATE_PREY * Prey"
-decrease_in_prey.calc_rule = "LOSS_RATE_PREY * encounters"
+prey.calc_rule = lambda: increase_in_prey - decrease_in_prey
+increase_in_prey.calc_rule = lambda: GROWTH_RATE_PREY * prey
+decrease_in_prey.calc_rule = lambda: LOSS_RATE_PREY * encounters
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")

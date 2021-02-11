@@ -9,32 +9,37 @@ class Flow(SystemElement):
     stocks and parameters at any time. They don't need an initial value.
     """
 
-    def __init__(self, name, system, input_elements=[]):
+    def __init__(self, name, system, var_name, input_elements=[]):
         """Constructor method.
 
         :param name: The element name. Can not be empty. Must be unique within the system.
         :type name: str
         :param system: The system that this element shall be part of.
         :type system: System
+        :param var_name: The name of the variable this element will be assigned to,
+            once it is constructed. This is needed because the variable name has to
+            be known in other modules to execute the lambda expression that defines
+            the calculation rule.
+        :type var_name: str
         :param input_elements: The system elements needed to calculate the
             value for this element (usually connected by arrows in a simulation
             diagram), defaults to an empty list
         :type input_elements: list, optional
         """
-        super().__init__(name, system)
+        super().__init__(name, system, var_name)
         self.input_elements = input_elements or []
 
 
 
     @property
     def calc_rule(self):
-        """The rule to use to calculate the value attribute.
+        """The rule used to calculate the value property.
 
-        Other system elements can be references by their name attribute.
-        See :py:func:`~sysdynpy.utils._validate_calc_rule` for details about
-        the syntax you can use.
-
-        :type: string
+        Input elements are referenced by their :py:attr:`~var_name` property.
+        The calculation rule is stored as a lambda expression. This means that
+        all valid python expression are valid as calculation rules.
+        
+        :type: function
         """
         return self._calc_rule
 
@@ -46,12 +51,7 @@ class Flow(SystemElement):
 
     @calc_rule.setter
     def calc_rule(self, value):
-        try:
-            utils._validate_calc_rule(value, self)
-        except ValueError as v:
-            raise v
-        else:
-            self._calc_rule = value
+        self._calc_rule = value
 
 
     @input_elements.setter

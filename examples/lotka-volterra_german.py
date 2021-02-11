@@ -20,20 +20,20 @@ number_of_simulation_steps = 200
 lv_system = System("lotka-volterra")
 
 # create elements
-raeuber = Stock("Räuber", 40, lv_system)
-beute = Stock("Beute", 500, lv_system)
+raeuber = Stock("Räuber", 40, lv_system, "raeuber")
+beute = Stock("Beute", 500, lv_system, "beute")
 
-WACHSTUMSRATE_BEUTE = Parameter("WACHSTUMSRATE_BEUTE", 0.05, lv_system)
-VERLUSTRATE_BEUTE = Parameter("VERLUSTRATE_BEUTE", 0.001, lv_system)
-ZUWACHSRATE_RAEUBER = Parameter("ZUWACHSRATE_RÄUBER", 0.0002, lv_system)
-ENERGIEVERLUSTRATE_RAEUBER = Parameter("ENERGIEVERLUSTRATE_RÄUBER", 0.1, lv_system)
+WACHSTUMSRATE_BEUTE = Parameter("WACHSTUMSRATE BEUTE", 0.05, lv_system, "WACHSTUMSRATE_BEUTE")
+VERLUSTRATE_BEUTE = Parameter("VERLUSTRATE BEUTE", 0.001, lv_system, "VERLUSTRATE_BEUTE")
+ZUWACHSRATE_RAEUBER = Parameter("ZUWACHSRATE RÄUBER", 0.0002, lv_system, "ZUWACHSRATE_RAEUBER")
+ENERGIEVERLUSTRATE_RAEUBER = Parameter("ENERGIEVERLUSTRATE RÄUBER", 0.1, lv_system, "ENERGIEVERLUSTRATE_RAEUBER")
 
-beutezuwachs = Flow("Beutezuwachs", lv_system)
-beuteverlust = Flow("Beuteverlust", lv_system)
-raeuberzuwachs = Flow("Räuberzuwachs", lv_system)
-energieverluste = Flow("Energieverluste", lv_system)
+beutezuwachs = Flow("Beutezuwachs", lv_system, "beutezuwachs")
+beuteverlust = Flow("Beuteverlust", lv_system, "beuteverlust")
+raeuberzuwachs = Flow("Raeuberzuwachs", lv_system, "raeuberzuwachs")
+energieverluste = Flow("Energieverluste", lv_system, "energieverluste")
 
-treffen = DynamicVariable("Treffen", lv_system)
+treffen = DynamicVariable("Treffen", lv_system, "treffen")
 
 # link elements
 raeuber.input_elements.extend([raeuberzuwachs, energieverluste])
@@ -50,15 +50,15 @@ beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
 beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
 
 # set calculation rules
-raeuber.calc_rule = "Räuberzuwachs - Energieverluste"
-raeuberzuwachs.calc_rule = "Treffen * ZUWACHSRATE_RÄUBER"
-energieverluste.calc_rule = "ENERGIEVERLUSTRATE_RÄUBER * Räuber"
+raeuber.calc_rule = lambda: raeuberzuwachs - energieverluste
+raeuberzuwachs.calc_rule = lambda: treffen * ZUWACHSRATE_RAEUBER
+energieverluste.calc_rule = lambda: ENERGIEVERLUSTRATE_RAEUBER * raeuber
 
-treffen.calc_rule = "Beute * Räuber"
+treffen.calc_rule = lambda: beute * raeuber
 
-beute.calc_rule = "Beutezuwachs - Beuteverlust"
-beutezuwachs.calc_rule = "WACHSTUMSRATE_BEUTE * Beute"
-beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
+beute.calc_rule = lambda: beutezuwachs - beuteverlust
+beutezuwachs.calc_rule = lambda: WACHSTUMSRATE_BEUTE * beute
+beuteverlust.calc_rule = lambda: VERLUSTRATE_BEUTE * treffen
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")
@@ -66,7 +66,7 @@ s1.run_simulation(lv_system)
 # get_simulation_results() returns a dict
 # Key = Name of the system element, Value = List of numerical values
 sim_results = s1.get_simulation_results()
-# pprint.pprint(sim_results) # print formatted results to console
+#pprint.pprint(sim_results) # print formatted results to console
 
 # export results to various formats
 # make sure the subfolder "results" exists or change the relative path

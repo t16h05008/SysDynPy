@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
+import re
 from sysdynpy.system import System
 import sysdynpy.utils as utils
+
 
 class SystemElement(utils.SubclassOnlyABC):
     """An **abstract** class for generic system elements. Concrete system elements
     like stacks or flows are derived from this class.
     """
 
-    def __init__(self, name, system):
+    def __init__(self, name, system, var_name):
         # \u00A0 is a non-printable character. It does not appear in the docs,
         # but can be used to exclude the paragraph in between from subclass
         # docstrings. This is done in the class 'extend_docstring' in the utils
@@ -22,11 +24,15 @@ class SystemElement(utils.SubclassOnlyABC):
         :type name: str
         :param system: The system that this element shall be part of.
         :type system: System
+        :param var_name: The name of the variable this element will be assigned to,
+            once it is constructed. This is needed because the variable name has to
+            be known in other modules to execute the lambda expression that defines
+            the calculation rule.
+        :type var_name: str
         """
         self.name = name
         self.system = system
-
-        utils._check_if_system_element_name_is_unique(self.name, self.system)
+        self.var_name = var_name
         # add to list of elements in system class
         system._system_elements.append(self)
 
@@ -45,6 +51,13 @@ class SystemElement(utils.SubclassOnlyABC):
         :type: int or float
         """
         return self._value
+
+
+    @property
+    def var_name(self):
+        """see :py:meth:`~__init__`
+        """
+        return self._var_name
     
 
     @property
@@ -70,6 +83,16 @@ class SystemElement(utils.SubclassOnlyABC):
     @system.setter
     def system(self, value):
         self._system = value
+
+    @var_name.setter
+    def var_name(self, value):
+        # check if value is a valid python variable name
+        pattern = re.compile("[a-zA-Z_][a-zA-Z\d_]*")
+        if pattern.match(value):
+            self._var_name = value
+        else:
+            raise ValueError("Given name " + value + " is no valid name for a " \
+                + "python variable")
 
 
     def __str__(self):
