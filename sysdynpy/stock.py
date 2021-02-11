@@ -65,7 +65,8 @@ class Stock(SystemElement):
         s = ""
         s += "{ name: " + self.name \
             + ", value: " + str(self.value) \
-            + ", system: " + str(self.system) \
+            + ", system: " + str(self.system.name) \
+            + ", var_name: " + str(self.var_name) \
             + " }"
         return s
 

@@ -11,9 +11,8 @@ class SubclassOnlyABC(object):
     
     By deriving SystemElement from this class we ensure that no instances can be
     created. This is done by overriding the __new__ method.
-     """
+    """
     __metaclass__ = ABCMeta
-
     def __new__(cls, *args, **kwargs):
         if cls.__bases__ == (SubclassOnlyABC,):
             msg = 'Abstract class {} cannot be instantiated'.format(cls.__name__)
@@ -27,10 +26,6 @@ class SystemElement(SubclassOnlyABC):
     """
 
     def __init__(self, name, system, var_name):
-        # \u00A0 is a non-printable character. It does not appear in the docs,
-        # but can be used to exclude the paragraph in between from subclass
-        # docstrings. This is done in the class 'extend_docstring' in the utils
-        # module.
         """Constructor method.
 
         As this is an abstract class this constructor **can not be called** directly.
@@ -59,7 +54,7 @@ class SystemElement(SubclassOnlyABC):
         """see :py:meth:`~__init__`
         """
         return self._name
-    
+
 
     @property
     def value(self):
@@ -75,7 +70,7 @@ class SystemElement(SubclassOnlyABC):
         """see :py:meth:`~__init__`
         """
         return self._var_name
-    
+
 
     @property
     def system(self):
@@ -90,7 +85,7 @@ class SystemElement(SubclassOnlyABC):
             self._name = value
         else:
             raise ValueError("name can not be empty")
-    
+
 
     @value.setter
     def value(self, value):
@@ -110,11 +105,3 @@ class SystemElement(SubclassOnlyABC):
         else:
             raise ValueError("Given name " + value + " is no valid name for a " \
                 + "python variable")
-
-
-    def __str__(self):
-        s = ""
-        s += "{ name: " + self.name \
-            + " }"
-        return s
-

@@ -21,7 +21,7 @@ class System(object):
     def show_system_elements(self):
         """Creates a string with information about the system elements.
 
-        This includes the properties :code:`name` and :code:`value`. Depending on the system
+        This includes the properties :code:`name` and :code:`var_name`. Depending on the system
         element :code:`calc_rule` and :code:`input_elements` are given as additional
         information. :code:`input_elements` only shows the name of all direct input
         elements to prevent recursion.
@@ -30,10 +30,10 @@ class System(object):
         s = ""
         s += "==== " + self.name + " ====\n"
         for element in self._system_elements:
-            s += "{ name: " + element.name \
-                + ", value: " + str(element.value)
-            if hasattr(element, "calc_rule"):
-                s += ", calc_rule: [" + element.calc_rule + "]"
+            s += "{ name: " + element.name
+            if hasattr(element, "value"):
+                s += ", value: " + str(element.value)
+            s += ", var_name: " + str(element.var_name)
             if hasattr(element, "input_elements"):
                 s += ", input_elements: ["
                 for idx, input_element in enumerate(element.input_elements):

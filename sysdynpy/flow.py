@@ -59,9 +59,10 @@ class Flow(SystemElement):
 
     def __str__(self):
         s = ""
-        s += "{ name: " + self.name \
-            + ", value: " + str(self.value) \
-            + ", system: " + str(self.system) \
-            + ", calc_rule: " + self.calc_rule \
+        s += "{ name: " + self.name
+        if hasattr(self, "value"):
+            s += ", value: " + str(self.value)
+        s += ", system: " + str(self.system.name) \
+            + ", var_name: " + str(self.var_name) \
             + " }"
         return s
