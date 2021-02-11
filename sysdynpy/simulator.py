@@ -2,11 +2,6 @@ import time
 import copy
 import numbers
 
-
-import sysdynpy.utils as utils
-
-
-
 class Simulator(object):
     """Can be used to run simulations for a given system.
     """

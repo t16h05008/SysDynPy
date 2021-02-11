@@ -1,6 +1,4 @@
 from sysdynpy.systemelement import SystemElement
-from sysdynpy.system import System
-import sysdynpy.utils as utils
 
 class DynamicVariable(SystemElement):
     """An auxiliary system element to simplify calculation rules.

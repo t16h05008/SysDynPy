@@ -1,6 +1,5 @@
 from sysdynpy.systemelement import SystemElement
-from sysdynpy.system import System
-import sysdynpy.utils as utils
+
 
 class Parameter(SystemElement):
     """Stores fixed values.

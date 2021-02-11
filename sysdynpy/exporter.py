@@ -1,10 +1,10 @@
 from pathlib import *
-import sysdynpy.utils as utils
 import json
 import csv
 import matplotlib.pyplot as plt
+from abc import ABC
 
-class Exporter(utils.SubclassOnlyABC):
+class Exporter(ABC):
     """An **abstract** class that can be used to export simulation results to
     different formats.
     """

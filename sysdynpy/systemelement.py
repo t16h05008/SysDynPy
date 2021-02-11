@@ -1,10 +1,27 @@
 from abc import ABC, abstractmethod
 import re
 from sysdynpy.system import System
-import sysdynpy.utils as utils
+from abc import ABC, ABCMeta, abstractmethod
+
+class SubclassOnlyABC(object):
+    """Helper class to prevent instantiation.
+    The class SystemElement is declared as abstract and should not be instantiated.
+    However, if there are no abstract methods present, it could be
+    instantiated.
+    
+    By deriving SystemElement from this class we ensure that no instances can be
+    created. This is done by overriding the __new__ method.
+     """
+    __metaclass__ = ABCMeta
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__bases__ == (SubclassOnlyABC,):
+            msg = 'Abstract class {} cannot be instantiated'.format(cls.__name__)
+            raise TypeError(msg)
+        return super(SubclassOnlyABC, cls).__new__(cls)
 
 
-class SystemElement(utils.SubclassOnlyABC):
+class SystemElement(SubclassOnlyABC):
     """An **abstract** class for generic system elements. Concrete system elements
     like stacks or flows are derived from this class.
     """
@@ -100,3 +117,4 @@ class SystemElement(utils.SubclassOnlyABC):
         s += "{ name: " + self.name \
             + " }"
         return s
+
