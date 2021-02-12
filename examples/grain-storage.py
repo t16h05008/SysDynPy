@@ -25,17 +25,26 @@ number_of_simulation_steps = 100
 gs_system = System("Grain Stock Storage")
 
 # create elements
-grain_on_order = Stock("grain on order", 10000, gs_system, "grain_on_order")
-grain_stock = Stock("grain stock", 1000, gs_system, "grain_stock")
+grain_on_order = Stock(name="grain on order", value=10000, system=gs_system,
+    var_name="grain_on_order", calc_rule=lambda: procurement_rate-receiving_rate)
+grain_stock = Stock(name="grain stock", value=1000, system=gs_system,
+    var_name="grain_stock", calc_rule=lambda: receiving_rate - release_rate)
 
-ADJUSTMENT_DELAY = Parameter("ADJUSTMENT DELAY", 5, gs_system, "ADJUSTMENT_DELAY")
-DESIRED_GRAIN_STOCK = Parameter("DESIRED GRAIN STOCK", 6000, gs_system, "DESIRED_GRAIN_STOCK")
-RECEIVING_DELAY = Parameter("RECEIVING DELAY", 10, gs_system, "RECEIVING_DELAY")
-RELEASE_FRACTION = Parameter("RELEASE FRACTION", 0.025, gs_system, "RELEASE_FRACTION")
+ADJUSTMENT_DELAY = Parameter(name="ADJUSTMENT DELAY", value=5, system=gs_system,
+    var_name="ADJUSTMENT_DELAY")
+DESIRED_GRAIN_STOCK = Parameter(name="DESIRED GRAIN STOCK", value=6000, system=gs_system,
+    var_name="DESIRED_GRAIN_STOCK")
+RECEIVING_DELAY = Parameter(name="RECEIVING DELAY", value=10, system=gs_system,
+    var_name="RECEIVING_DELAY")
+RELEASE_FRACTION = Parameter(name="RELEASE FRACTION", value=0.025, system=gs_system,
+    var_name="RELEASE_FRACTION")
 
-procurement_rate = Flow("procurement rate", gs_system, "procurement_rate")
-receiving_rate = Flow("receiving rate", gs_system, "receiving_rate")
-release_rate = Flow("release rate", gs_system, "release_rate")
+procurement_rate = Flow(name="procurement rate", system=gs_system, var_name="procurement_rate",
+    calc_rule=lambda: (DESIRED_GRAIN_STOCK - grain_stock)/ADJUSTMENT_DELAY)
+receiving_rate = Flow(name="receiving rate", system=gs_system,
+    var_name="receiving_rate", calc_rule=lambda: grain_on_order/RECEIVING_DELAY)
+release_rate = Flow(name="release rate", system=gs_system,
+    var_name="release_rate", calc_rule=lambda: grain_stock*RELEASE_FRACTION)
 
 # link elements
 grain_on_order.input_elements.extend([procurement_rate, receiving_rate])
@@ -44,14 +53,6 @@ grain_stock.input_elements.extend([receiving_rate, release_rate])
 procurement_rate.input_elements.extend([ADJUSTMENT_DELAY, DESIRED_GRAIN_STOCK, grain_stock])
 receiving_rate.input_elements.extend([grain_on_order, RECEIVING_DELAY])
 release_rate.input_elements.extend([grain_stock, RELEASE_FRACTION])
-
-# set calculation rules
-grain_on_order.calc_rule = lambda: procurement_rate-receiving_rate
-grain_stock.calc_rule = lambda: receiving_rate - release_rate
-
-procurement_rate.calc_rule = lambda: (DESIRED_GRAIN_STOCK - grain_stock)/ADJUSTMENT_DELAY
-receiving_rate.calc_rule = lambda: grain_on_order/RECEIVING_DELAY
-release_rate.calc_rule = lambda: grain_stock*RELEASE_FRACTION
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")

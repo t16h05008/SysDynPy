@@ -40,7 +40,7 @@ The simulation diagram for the model we are about to implement looks like this:
 ![simulation-diagram-lotka-volterra](examples/simulation-diagram-lotka-volterra.png "simulation-diagram-lotka-volterra"). 
 
 #### 1. Creating the system
-This step is pretty simple. We create a system so we can reference it when creating the system elements in the next step.
+This step is pretty simple. We create a system so we can reference it when creating the system elements in the next step. The system keeps track of all system elements and can show them if needed by using `lv_system.show_system_elements()`.
 
 ```python
 number_of_simulation_steps = 200
@@ -50,63 +50,63 @@ lv_system = System("lotka-volterra")
 ```
 
 #### 2. Creating system elements
+This is where the system gets filled with elements. We define stocks, parameters, flows and a dynamic variable. This is what the constructor arguments mean:
 
+* **name**: A name for the element. This is used for error messages and the exporter.
+* **value**: The initial value for the element
+* system: The reference to the system object
+* **var_name**: The name of the variable the object is assigned to once it is created. This is needed to have access to the variable name in other modules (e.g. to execute the lambda expression there).
+* **calc_rule**: A lambda expression that defines how the value should be calculated.
+
+Note that parameters have a fixed value, so the don't need a calculation rule. Flows and dynamic variables have no initial value.
 
 ```python
 # create elements
-predators = Stock("Predators", 40, lv_system)
-prey = Stock("Prey", 500, lv_system)
+predators = Stock(name="Predators", value=40, system=lv_system, var_name="predators",
+    calc_rule=lambda: increase_in_predators - energy_loss)
+prey = Stock(name="Prey", value=500, system=lv_system, var_name="prey", 
+    calc_rule=lambda: increase_in_prey - decrease_in_prey)
 
-GROWTH_RATE_PREY = Parameter("GROWTH_RATE_PREY", 0.05, lv_system)
-LOSS_RATE_PREY = Parameter("LOSS_RATE_PREY", 0.001, lv_system)
-GROWTH_RATE_PREDATORS = Parameter("GROWTH_RATE_PREDATORS", 0.0002, lv_system)
-ENERGY_LOSS_RATE_PREDATORS = Parameter("ENERGY_LOSS_RATE_PREDATORS", 0.1, lv_system)
+GROWTH_RATE_PREY = Parameter(name="GROWTH RATE PREY", value=0.05,
+system=lv_system, var_name="GROWTH_RATE_PREY")
+LOSS_RATE_PREY = Parameter(name="LOSS RATE PREY", value=0.001,
+    system=lv_system, var_name="LOSS_RATE_PREY")
+GROWTH_RATE_PREDATORS = Parameter(name="GROWTH RATE PREDATORS", value=0.0002,
+    system=lv_system, var_name="GROWTH_RATE_PREDATORS")
+ENERGY_LOSS_RATE_PREDATORS = Parameter(name="ENERGY LOSS RATE PREDATORS", value=0.1,
+    system=lv_system, var_name="ENERGY_LOSS_RATE_PREDATORS")
 
-increase_in_prey = Flow("increase_in_prey", lv_system)
-decrease_in_prey = Flow("decrease_in_prey", lv_system)
-increase_in_predators = Flow("increase_in_predators", lv_system)
-energy_loss = Flow("energy_loss", lv_system)
+increase_in_prey = Flow(name="increase in prey", system=lv_system,
+    var_name="increase_in_prey", calc_rule=lambda: GROWTH_RATE_PREY * prey)
+decrease_in_prey = Flow(name="decrease in prey", system=lv_system,
+    var_name="decrease_in_prey", calc_rule=lambda: LOSS_RATE_PREY * encounters)
+increase_in_predators = Flow(name="increase in predators", system=lv_system,
+    var_name="increase_in_predators", calc_rule=lambda: encounters * GROWTH_RATE_PREDATORS)
+energy_loss = Flow(name="energy loss", system=lv_system,
+    var_name="energy_loss", calc_rule=lambda: ENERGY_LOSS_RATE_PREDATORS * predators)
 
-encounters = DynamicVariable("encounters", lv_system)
+encounters = DynamicVariable(name="encounters", system=lv_system, var_name="encounters",
+    calc_rule=lambda: prey * predators)
 ```
 
 #### 3. Connecting system elements
-Most system elements have a property named `input_elements` where we can store a list of all system elements that serve as an input for the calculation of that element. Like this, we create one-directional associations which are represented by arrows in the simulation diagram above.
+Most system elements have a property named `input_elements` where we can store a list of all system elements that serve as an input for the calculation of that element (the exception to that are parameters). Like this, we create one-directional associations which are represented by arrows in the simulation diagram above.
+It is also possible to link elements at creation time (step 2), given that the elements to link already exist. In most cases defining all elements first is easier. That way we don't have to care about the order we create elements in.
 
 ```python
 # link elements
 predators.input_elements.extend([increase_in_predators, energy_loss])
+prey.input_elements.extend([increase_in_prey, decrease_in_prey])
 
+increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
+decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
 increase_in_predators.input_elements.extend([GROWTH_RATE_PREDATORS, encounters])
 energy_loss.input_elements.extend([ENERGY_LOSS_RATE_PREDATORS, predators])
 
 encounters.input_elements.extend([prey, predators])
-
-prey.input_elements.extend([increase_in_prey, decrease_in_prey])
-
-increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
-
-decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
 ```
 
-#### 4. Defining calculation rules for each system element
-Once we know the inputs of an element, we can define the calculation rule. This step is done after connecting the elements on purpose. That way the calculation rules can be validated as they are defined.
-Each calculation rule must use all input elements and can only use basic arithmetic operations (addition, subtraction, multiplication and division).
-
-```python
-# set calculation rules
-predators.calc_rule = "increase_in_predators - energy_loss"
-increase_in_predators.calc_rule = "encounters * GROWTH_RATE_PREDATORS"
-energy_loss.calc_rule = "ENERGY_LOSS_RATE_PREDATORS * Predators"
-
-encounters.calc_rule = "Prey * Predators"
-
-prey.calc_rule = "increase_in_prey - decrease_in_prey"
-increase_in_prey.calc_rule = "GROWTH_RATE_PREY * Prey"
-decrease_in_prey.calc_rule = "LOSS_RATE_PREY * encounters"
-```
-
-#### 5. Run the simulation
+#### 4. Run the simulation
 Now we are ready to run a simulation. This is done with a simulator. Multiple simulators can be used for different configurations (e.g. number of simulation steps), but for now we just use one.
 Once the simulation is done `get_simulation_results()` can be used to return them as a dictionary.
 
@@ -120,7 +120,7 @@ sim_results = s1.get_simulation_results()
 # pprint.pprint(sim_results) # print formatted results to console
 ```
 
-#### 6. Save the results
+#### 5. Save the results
 At this point you are free to use the results however you like. As simulations can take some time saving the results for later use seems useful. With `csv` and `json` two very common formats are supported.
 `export_graph` provides a way to visualize the results. It is meant to give a first impression on how the result looks like and has limited customization options. If you need more control on how the graph looks like libraries like [Matplotlib](https://matplotlib.org/) are designed for that and provide many options. Alternatively you can import the `json` or `csv` file to other software and do the styling there.
 

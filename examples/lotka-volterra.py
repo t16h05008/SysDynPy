@@ -20,22 +20,31 @@ number_of_simulation_steps = 200
 lv_system = System("lotka-volterra")
 
 # create elements
-predators = Stock("Predators", 40, lv_system, "predators")
-prey = Stock("Prey", 500, lv_system, "prey")
+predators = Stock(name="Predators", value=40, system=lv_system, var_name="predators",
+    calc_rule=lambda: increase_in_predators - energy_loss)
+prey = Stock(name="Prey", value=500, system=lv_system, var_name="prey", 
+    calc_rule=lambda: increase_in_prey - decrease_in_prey)
 
-GROWTH_RATE_PREY = Parameter("GROWTH RATE PREY", 0.05, lv_system, "GROWTH_RATE_PREY")
-LOSS_RATE_PREY = Parameter("LOSS RATE PREY", 0.001, lv_system, "LOSS_RATE_PREY")
-GROWTH_RATE_PREDATORS = Parameter("GROWTH RATE PREDATORS", 0.0002, lv_system, \
-    "GROWTH_RATE_PREDATORS")
-ENERGY_LOSS_RATE_PREDATORS = Parameter("ENERGY LOSS RATE PREDATORS", 0.1, lv_system, \
-    "ENERGY_LOSS_RATE_PREDATORS")
+GROWTH_RATE_PREY = Parameter(name="GROWTH RATE PREY", value=0.05,
+system=lv_system, var_name="GROWTH_RATE_PREY")
+LOSS_RATE_PREY = Parameter(name="LOSS RATE PREY", value=0.001,
+    system=lv_system, var_name="LOSS_RATE_PREY")
+GROWTH_RATE_PREDATORS = Parameter(name="GROWTH RATE PREDATORS", value=0.0002,
+    system=lv_system, var_name="GROWTH_RATE_PREDATORS")
+ENERGY_LOSS_RATE_PREDATORS = Parameter(name="ENERGY LOSS RATE PREDATORS", value=0.1,
+    system=lv_system, var_name="ENERGY_LOSS_RATE_PREDATORS")
 
-increase_in_prey = Flow("increase in prey", lv_system, "increase_in_prey")
-decrease_in_prey = Flow("decrease in prey", lv_system, "decrease_in_prey")
-increase_in_predators = Flow("increase in predators", lv_system, "increase_in_predators")
-energy_loss = Flow("energy loss", lv_system, "energy_loss")
+increase_in_prey = Flow(name="increase in prey", system=lv_system,
+    var_name="increase_in_prey", calc_rule=lambda: GROWTH_RATE_PREY * prey)
+decrease_in_prey = Flow(name="decrease in prey", system=lv_system,
+    var_name="decrease_in_prey", calc_rule=lambda: LOSS_RATE_PREY * encounters)
+increase_in_predators = Flow(name="increase in predators", system=lv_system,
+    var_name="increase_in_predators", calc_rule=lambda: encounters * GROWTH_RATE_PREDATORS)
+energy_loss = Flow(name="energy loss", system=lv_system,
+    var_name="energy_loss", calc_rule=lambda: ENERGY_LOSS_RATE_PREDATORS * predators)
 
-encounters = DynamicVariable("encounters", lv_system, "encounters")
+encounters = DynamicVariable(name="encounters", system=lv_system, var_name="encounters",
+    calc_rule=lambda: prey * predators)
 
 # link elements
 predators.input_elements.extend([increase_in_predators, energy_loss])
@@ -47,17 +56,6 @@ increase_in_predators.input_elements.extend([GROWTH_RATE_PREDATORS, encounters])
 energy_loss.input_elements.extend([ENERGY_LOSS_RATE_PREDATORS, predators])
 
 encounters.input_elements.extend([prey, predators])
-
-# set calculation rules
-predators.calc_rule = lambda: increase_in_predators - energy_loss
-prey.calc_rule = lambda: increase_in_prey - decrease_in_prey
-
-increase_in_prey.calc_rule = lambda: GROWTH_RATE_PREY * prey
-decrease_in_prey.calc_rule = lambda: LOSS_RATE_PREY * encounters
-increase_in_predators.calc_rule = lambda: encounters * GROWTH_RATE_PREDATORS
-energy_loss.calc_rule = lambda: ENERGY_LOSS_RATE_PREDATORS * predators
-
-encounters.calc_rule = lambda: prey * predators
 
 # run simulation
 s1 = Simulator(number_of_simulation_steps, "weeks")
