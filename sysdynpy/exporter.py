@@ -61,7 +61,7 @@ class Exporter(ABC):
     @classmethod
     def export_graph(cls, results, file_format, system_elements, \
         range_x, range_y, colors, title="", label_x="", label_y="", line_width=1,
-        legend_pos="upper left", rel_path="./results",):
+        legend_pos="upper left", rel_path="./results"):
         """Creates a diagram from the simulation results and saves it to the file
         system.
 

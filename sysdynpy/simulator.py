@@ -73,7 +73,7 @@ class Simulator(object):
                 if "Flow" in str(type(elem)) or "DynamicVariable" in str(type(elem)):
                     # set the calculated value directly
                     system._system_elements[idx].value = \
-                        Simulator._calculate_value(elem)
+                        self._calculate_value(elem)
                 else:
                     pass # for parameters and stocks
 
@@ -87,7 +87,7 @@ class Simulator(object):
             for idx, elem in enumerate(system_backup._system_elements):
                 if  "Stock" in str(type(elem)):
                     current_stock_value = system._system_elements[idx].value
-                    change = Simulator._calculate_stock_change(elem)
+                    change = self._calculate_stock_change(elem)
                     system._system_elements[idx].value = current_stock_value + change * self.dt
 
             # store copy of system state every 1 / dt steps
@@ -135,9 +135,8 @@ class Simulator(object):
                         result[element.name].append(element.value)
         return result
 
-    
-    @classmethod
-    def _calculate_value(cls, element):
+
+    def _calculate_value(self, element):
         """Calculates the values for a given element based on the calculation rule.
 
         This is a recursive function to calculate the value of a flow or
@@ -157,15 +156,15 @@ class Simulator(object):
             if "Stock" in str(type(inp_elem)) or "Parameter" in str(type(inp_elem)):
                 temp_dict[inp_elem.var_name] = inp_elem.value
             else:
-                temp_dict[inp_elem.var_name] = cls._calculate_value(inp_elem)
+                temp_dict[inp_elem.var_name] = self._calculate_value(inp_elem)
         
         for key in temp_dict:
             calc_rule.__globals__[key] = temp_dict[key]
 
         return calc_rule()
 
-    @classmethod
-    def _calculate_stock_change(cls, element):
+
+    def _calculate_stock_change(self, element):
         calc_rule = element.calc_rule
 
         temp_dict = {}
