@@ -83,10 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
             
@@ -159,7 +156,9 @@
  <a href="#_"><strong>_</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -176,17 +175,47 @@
       <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable.__init__">__init__() (sysdynpy.dynamicvariable.DynamicVariable method)</a>
 
       <ul>
+        <li><a href="exporter.html#sysdynpy.exporter.Exporter.__init__">(sysdynpy.exporter.Exporter method)</a>
+</li>
         <li><a href="flow.html#sysdynpy.flow.Flow.__init__">(sysdynpy.flow.Flow method)</a>
 </li>
         <li><a href="parameter.html#sysdynpy.parameter.Parameter.__init__">(sysdynpy.parameter.Parameter method)</a>
+</li>
+        <li><a href="simulator.html#sysdynpy.simulator.Simulator.__init__">(sysdynpy.simulator.Simulator method)</a>
 </li>
         <li><a href="stock.html#sysdynpy.stock.Stock.__init__">(sysdynpy.stock.Stock method)</a>
 </li>
         <li><a href="system.html#sysdynpy.system.System.__init__">(sysdynpy.system.System method)</a>
 </li>
+        <li><a href="systemelement.html#sysdynpy.systemelement.SubclassOnlyABC.__init__">(sysdynpy.systemelement.SubclassOnlyABC method)</a>
+</li>
         <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.__init__">(sysdynpy.systemelement.SystemElement method)</a>
 </li>
       </ul></li>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter._abc_impl">_abc_impl (sysdynpy.exporter.Exporter attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator._calculate_stock_change">_calculate_stock_change() (sysdynpy.simulator.Simulator method)</a>
+</li>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator._calculate_value">_calculate_value() (sysdynpy.simulator.Simulator method)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter._check_file_format">_check_file_format() (sysdynpy.exporter.Exporter class method)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter._check_if_system_elements_in_results">_check_if_system_elements_in_results() (in module sysdynpy.exporter)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter._create_abs_output_path">_create_abs_output_path() (in module sysdynpy.exporter)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter._filter_results">_filter_results() (in module sysdynpy.exporter)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter._prepare_export">_prepare_export() (sysdynpy.exporter.Exporter class method)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter._supported_formats">_supported_formats (sysdynpy.exporter.Exporter attribute)</a>
+</li>
+      <li><a href="system.html#sysdynpy.system.System._system_elements">_system_elements (sysdynpy.system.System attribute)</a>
+</li>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator._system_states">_system_states (sysdynpy.simulator.Simulator attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -207,7 +236,25 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.dt">dt() (sysdynpy.simulator.Simulator property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable">DynamicVariable (class in sysdynpy.dynamicvariable)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter.export_data">export_data() (sysdynpy.exporter.Exporter class method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter.export_graph">export_graph() (sysdynpy.exporter.Exporter class method)</a>
+</li>
+      <li><a href="exporter.html#sysdynpy.exporter.Exporter">Exporter (class in sysdynpy.exporter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -216,6 +263,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="flow.html#sysdynpy.flow.Flow">Flow (class in sysdynpy.flow)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.get_simulation_results">get_simulation_results() (sysdynpy.simulator.Simulator method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -243,17 +298,19 @@
       <ul>
         <li><a href="dynamicvariable.html#module-sysdynpy.dynamicvariable">sysdynpy.dynamicvariable</a>
 </li>
+        <li><a href="exporter.html#module-sysdynpy.exporter">sysdynpy.exporter</a>
+</li>
         <li><a href="flow.html#module-sysdynpy.flow">sysdynpy.flow</a>
 </li>
         <li><a href="parameter.html#module-sysdynpy.parameter">sysdynpy.parameter</a>
+</li>
+        <li><a href="simulator.html#module-sysdynpy.simulator">sysdynpy.simulator</a>
 </li>
         <li><a href="stock.html#module-sysdynpy.stock">sysdynpy.stock</a>
 </li>
         <li><a href="system.html#module-sysdynpy.system">sysdynpy.system</a>
 </li>
         <li><a href="systemelement.html#module-sysdynpy.systemelement">sysdynpy.systemelement</a>
-</li>
-        <li><a href="utils.html#module-sysdynpy.utils">sysdynpy.utils</a>
 </li>
       </ul></li>
   </ul></td>
@@ -262,9 +319,17 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system.html#sysdynpy.system.System.name">name() (sysdynpy.system.System property)</a>
+      <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable.name">name() (sysdynpy.dynamicvariable.DynamicVariable property)</a>
 
       <ul>
+        <li><a href="flow.html#sysdynpy.flow.Flow.name">(sysdynpy.flow.Flow property)</a>
+</li>
+        <li><a href="parameter.html#sysdynpy.parameter.Parameter.name">(sysdynpy.parameter.Parameter property)</a>
+</li>
+        <li><a href="stock.html#sysdynpy.stock.Stock.name">(sysdynpy.stock.Stock property)</a>
+</li>
+        <li><a href="system.html#sysdynpy.system.System.name">(sysdynpy.system.System property)</a>
+</li>
         <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.name">(sysdynpy.systemelement.SystemElement property)</a>
 </li>
       </ul></li>
@@ -282,7 +347,7 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system.html#sysdynpy.system.System.run_simulation">run_simulation() (sysdynpy.system.System method)</a>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.run_simulation">run_simulation() (sysdynpy.simulator.Simulator method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -292,17 +357,26 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="system.html#sysdynpy.system.System.show_system_elements">show_system_elements() (sysdynpy.system.System method)</a>
 </li>
-      <li><a href="system.html#sysdynpy.system.System.simulation_steps">simulation_steps() (sysdynpy.system.System property)</a>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.simulation_steps">simulation_steps() (sysdynpy.simulator.Simulator property)</a>
+</li>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator">Simulator (class in sysdynpy.simulator)</a>
 </li>
       <li><a href="stock.html#sysdynpy.stock.Stock">Stock (class in sysdynpy.stock)</a>
 </li>
-      <li><a href="utils.html#sysdynpy.utils.SubclassOnlyABC">SubclassOnlyABC (class in sysdynpy.utils)</a>
+      <li><a href="systemelement.html#sysdynpy.systemelement.SubclassOnlyABC">SubclassOnlyABC (class in sysdynpy.systemelement)</a>
 </li>
       <li>
     sysdynpy.dynamicvariable
 
       <ul>
         <li><a href="dynamicvariable.html#module-sysdynpy.dynamicvariable">module</a>
+</li>
+      </ul></li>
+      <li>
+    sysdynpy.exporter
+
+      <ul>
+        <li><a href="exporter.html#module-sysdynpy.exporter">module</a>
 </li>
       </ul></li>
       <li>
@@ -320,14 +394,21 @@
 </li>
       </ul></li>
       <li>
+    sysdynpy.simulator
+
+      <ul>
+        <li><a href="simulator.html#module-sysdynpy.simulator">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     sysdynpy.stock
 
       <ul>
         <li><a href="stock.html#module-sysdynpy.stock">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     sysdynpy.system
 
@@ -342,19 +423,20 @@
         <li><a href="systemelement.html#module-sysdynpy.systemelement">module</a>
 </li>
       </ul></li>
-      <li>
-    sysdynpy.utils
-
-      <ul>
-        <li><a href="utils.html#module-sysdynpy.utils">module</a>
-</li>
-      </ul></li>
       <li><a href="system.html#sysdynpy.system.System">System (class in sysdynpy.system)</a>
 </li>
-      <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.system">system() (sysdynpy.systemelement.SystemElement property)</a>
+      <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable.system">system() (sysdynpy.dynamicvariable.DynamicVariable property)</a>
+
+      <ul>
+        <li><a href="flow.html#sysdynpy.flow.Flow.system">(sysdynpy.flow.Flow property)</a>
 </li>
-      <li><a href="system.html#sysdynpy.system.System.system_elements">system_elements() (sysdynpy.system.System property)</a>
+        <li><a href="parameter.html#sysdynpy.parameter.Parameter.system">(sysdynpy.parameter.Parameter property)</a>
 </li>
+        <li><a href="stock.html#sysdynpy.stock.Stock.system">(sysdynpy.stock.Stock property)</a>
+</li>
+        <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.system">(sysdynpy.systemelement.SystemElement property)</a>
+</li>
+      </ul></li>
       <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement">SystemElement (class in sysdynpy.systemelement)</a>
 </li>
   </ul></td>
@@ -363,7 +445,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system.html#sysdynpy.system.System.time_unit">time_unit() (sysdynpy.system.System property)</a>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.time_unit">time_unit() (sysdynpy.simulator.Simulator property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -371,12 +453,34 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="system.html#sysdynpy.system.System.VALID_TIME_UNITS">VALID_TIME_UNITS (sysdynpy.system.System attribute)</a>
+      <li><a href="simulator.html#sysdynpy.simulator.Simulator.VALID_TIME_UNITS">VALID_TIME_UNITS (sysdynpy.simulator.Simulator attribute)</a>
 </li>
+      <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable.value">value() (sysdynpy.dynamicvariable.DynamicVariable property)</a>
+
+      <ul>
+        <li><a href="flow.html#sysdynpy.flow.Flow.value">(sysdynpy.flow.Flow property)</a>
+</li>
+        <li><a href="parameter.html#sysdynpy.parameter.Parameter.value">(sysdynpy.parameter.Parameter property)</a>
+</li>
+        <li><a href="stock.html#sysdynpy.stock.Stock.value">(sysdynpy.stock.Stock property)</a>
+</li>
+        <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.value">(sysdynpy.systemelement.SystemElement property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.value">value() (sysdynpy.systemelement.SystemElement property)</a>
+      <li><a href="dynamicvariable.html#sysdynpy.dynamicvariable.DynamicVariable.var_name">var_name() (sysdynpy.dynamicvariable.DynamicVariable property)</a>
+
+      <ul>
+        <li><a href="flow.html#sysdynpy.flow.Flow.var_name">(sysdynpy.flow.Flow property)</a>
 </li>
+        <li><a href="parameter.html#sysdynpy.parameter.Parameter.var_name">(sysdynpy.parameter.Parameter property)</a>
+</li>
+        <li><a href="stock.html#sysdynpy.stock.Stock.var_name">(sysdynpy.stock.Stock property)</a>
+</li>
+        <li><a href="systemelement.html#sysdynpy.systemelement.SystemElement.var_name">(sysdynpy.systemelement.SystemElement property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

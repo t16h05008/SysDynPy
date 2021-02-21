@@ -38,7 +38,6 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="utils" href="utils.html" />
     <link rel="prev" title="system" href="system.html" /> 
 </head>
 
@@ -85,19 +84,17 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dynamicvariable.html">dynamicvariable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exporter.html">exporter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html">flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter.html">parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulator.html">simulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stock.html">stock</a></li>
 <li class="toctree-l2"><a class="reference internal" href="system.html">system</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">systemelement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
             
@@ -170,31 +167,77 @@
   <div class="section" id="module-sysdynpy.systemelement">
 <span id="systemelement"></span><h1>systemelement<a class="headerlink" href="#module-sysdynpy.systemelement" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
+<dt id="sysdynpy.systemelement.SubclassOnlyABC">
+<em class="property">class </em><code class="sig-prename descclassname">sysdynpy.systemelement.</code><code class="sig-name descname">SubclassOnlyABC</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/systemelement.html#SubclassOnlyABC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.systemelement.SubclassOnlyABC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Helper class to prevent instantiation.
+The class SystemElement is declared as abstract and should not be instantiated.
+However, if there are no abstract methods present, it could be
+instantiated.</p>
+<p>By deriving SystemElement from this class we ensure that no instances can be
+created. This is done by overriding the __new__ method.</p>
+<dl class="py method">
+<dt id="sysdynpy.systemelement.SubclassOnlyABC.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sysdynpy.systemelement.SubclassOnlyABC.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="sysdynpy.systemelement.SystemElement">
 <em class="property">class </em><code class="sig-prename descclassname">sysdynpy.systemelement.</code><code class="sig-name descname">SystemElement</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/systemelement.html#SystemElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.systemelement.SystemElement" title="Permalink to this definition">¶</a></dt>
-<dd><p>some class</p>
+<dd><p>Bases: <a class="reference internal" href="#sysdynpy.systemelement.SubclassOnlyABC" title="sysdynpy.systemelement.SubclassOnlyABC"><code class="xref py py-class docutils literal notranslate"><span class="pre">sysdynpy.systemelement.SubclassOnlyABC</span></code></a></p>
+<p>An <strong>abstract</strong> class for generic system elements. Concrete system elements
+like stacks or flows are derived from this class.</p>
 <dl class="py method">
 <dt id="sysdynpy.systemelement.SystemElement.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">system</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/systemelement.html#SystemElement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">system</span></em>, <em class="sig-param"><span class="n">var_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/systemelement.html#SystemElement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.</p>
+<p>As this is an abstract class this constructor <strong>can not be called</strong> directly.
+But it provides a way to bundle code that needs to run when a subclass
+instance is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The element name. Can not be empty. Must be unique within the system.</p></li>
+<li><p><strong>system</strong> (<a class="reference internal" href="system.html#sysdynpy.system.System" title="sysdynpy.system.System"><em>System</em></a>) – The system that this element shall be part of.</p></li>
+<li><p><strong>var_name</strong> (<em>str</em>) – The name of the variable this element will be assigned to,
+once it is constructed. This is needed because the variable name has to
+be known in other modules to execute the lambda expression that defines
+the calculation rule.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.systemelement.SystemElement.name">
 <em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>see <a class="reference internal" href="#sysdynpy.systemelement.SystemElement.__init__" title="sysdynpy.systemelement.SystemElement.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.systemelement.SystemElement.system">
 <em class="property">property </em><code class="sig-name descname">system</code><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.system" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>see <a class="reference internal" href="#sysdynpy.systemelement.SystemElement.__init__" title="sysdynpy.systemelement.SystemElement.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.systemelement.SystemElement.value">
 <em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>The numeric value that is used in calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int or float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sysdynpy.systemelement.SystemElement.var_name">
+<em class="property">property </em><code class="sig-name descname">var_name</code><a class="headerlink" href="#sysdynpy.systemelement.SystemElement.var_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>see <a class="reference internal" href="#sysdynpy.systemelement.SystemElement.__init__" title="sysdynpy.systemelement.SystemElement.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -207,7 +250,6 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="utils.html" class="btn btn-neutral float-right" title="utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="system.html" class="btn btn-neutral float-left" title="system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

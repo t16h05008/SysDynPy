@@ -3,4 +3,3 @@ parameter
 =================
 
 .. automodule:: sysdynpy.parameter
-   :members:

@@ -85,19 +85,17 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dynamicvariable.html">dynamicvariable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exporter.html">exporter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html">flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter.html">parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulator.html">simulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stock.html">stock</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">system</a></li>
 <li class="toctree-l2"><a class="reference internal" href="systemelement.html">systemelement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
             
@@ -171,71 +169,48 @@
 <span id="system"></span><h1>system<a class="headerlink" href="#module-sysdynpy.system" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="sysdynpy.system.System">
-<em class="property">class </em><code class="sig-prename descclassname">sysdynpy.system.</code><code class="sig-name descname">System</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">simulation_steps</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">time_unit</span><span class="o">=</span><span class="default_value">'days'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class represents a System Dynamics system/model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>required</em>) – The system name</p></li>
-<li><p><strong>simulation_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of steps to simulate 
-when run_simulation() is called, defaults to 10</p></li>
-<li><p><strong>time_unit</strong> (str, optional, defaults to <code class="code docutils literal notranslate"><span class="pre">days</span></code>.) – Defines the time period of one simulation step.
-The value must be one of the values defines in <code class="code docutils literal notranslate"><span class="pre">VALID_TIME_UNITS</span></code></p></li>
-</ul>
-</dd>
-</dl>
+<em class="property">class </em><code class="sig-prename descclassname">sysdynpy.system.</code><code class="sig-name descname">System</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class represents a System Dynamics system/model.</p>
+<p>It maintains a list of system elements (<a class="reference internal" href="#sysdynpy.system.System._system_elements" title="sysdynpy.system.System._system_elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_system_elements</span></code></a>).</p>
 <dl class="py method">
 <dt id="sysdynpy.system.System.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">simulation_steps</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">time_unit</span><span class="o">=</span><span class="default_value">'days'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="sysdynpy.system.System.run_simulation">
-<code class="sig-name descname">run_simulation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System.run_simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System.run_simulation" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the system.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.system.System.show_system_elements">
 <code class="sig-name descname">show_system_elements</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/system.html#System.show_system_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.system.System.show_system_elements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a string with information about the system elements.</p>
-<p>This includes the properties <code class="code docutils literal notranslate"><span class="pre">name</span></code> and <code class="code docutils literal notranslate"><span class="pre">value</span></code>. Depending on the system
-element <code class="code docutils literal notranslate"><span class="pre">calc_rule</span></code> and <code class="code docutils literal notranslate"><span class="pre">input_elements</span></code> are given as additional
-information. <code class="code docutils literal notranslate"><span class="pre">input_elements</span></code> only shows the name of all direct input
-elements to prevent recursion.
+<p>This includes the properties <a class="reference internal" href="systemelement.html#sysdynpy.systemelement.SystemElement.name" title="sysdynpy.systemelement.SystemElement.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a> and 
+<a class="reference internal" href="systemelement.html#sysdynpy.systemelement.SystemElement.var_name" title="sysdynpy.systemelement.SystemElement.var_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">var_name</span></code></a>. Depending on the system element
+<a class="reference internal" href="stock.html#sysdynpy.stock.Stock.calc_rule" title="sysdynpy.stock.Stock.calc_rule"><code class="xref py py-attr docutils literal notranslate"><span class="pre">calc_rule</span></code></a> and <a class="reference internal" href="stock.html#sysdynpy.stock.Stock.input_elements" title="sysdynpy.stock.Stock.input_elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">input_elements</span></code></a>
+are given as additional information. <a class="reference internal" href="stock.html#sysdynpy.stock.Stock.input_elements" title="sysdynpy.stock.Stock.input_elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">input_elements</span></code></a>
+only shows the name of all direct input elements to prevent recursion.
 The string is printed to the console.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="sysdynpy.system.System.VALID_TIME_UNITS">
-<code class="sig-name descname">VALID_TIME_UNITS</code><em class="property"> = ('milliseconds', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years')</em><a class="headerlink" href="#sysdynpy.system.System.VALID_TIME_UNITS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Possible values for the property <code class="code docutils literal notranslate"><span class="pre">time_unit</span></code>.</p>
+<dt id="sysdynpy.system.System._system_elements">
+<code class="sig-name descname">_system_elements</code><a class="headerlink" href="#sysdynpy.system.System._system_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of system elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.system.System.name">
 <em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#sysdynpy.system.System.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>str: The name of the system.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="sysdynpy.system.System.simulation_steps">
-<em class="property">property </em><code class="sig-name descname">simulation_steps</code><a class="headerlink" href="#sysdynpy.system.System.simulation_steps" title="Permalink to this definition">¶</a></dt>
-<dd><p>int: The number of steps for the simulation.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="sysdynpy.system.System.system_elements">
-<em class="property">property </em><code class="sig-name descname">system_elements</code><a class="headerlink" href="#sysdynpy.system.System.system_elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>list: A list that maintains all elements currently in the system.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="sysdynpy.system.System.time_unit">
-<em class="property">property </em><code class="sig-name descname">time_unit</code><a class="headerlink" href="#sysdynpy.system.System.time_unit" title="Permalink to this definition">¶</a></dt>
-<dd><p>str: Defines the time period of one simulation step.
-The value must be one of the values defines in <code class="code docutils literal notranslate"><span class="pre">VALID_TIME_UNITS</span></code></p>
+<dd><p>see <a class="reference internal" href="#sysdynpy.system.System.__init__" title="sysdynpy.system.System.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
