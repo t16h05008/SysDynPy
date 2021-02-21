@@ -90,9 +90,9 @@ class Simulator(object):
                     change = self._calculate_stock_change(elem)
                     system._system_elements[idx].value = current_stock_value + change * self.dt
 
-            # store copy of system state every 1 / dt steps
-            # example: dt = 0.05 --> every 20 steps
-            if i % (1 / self.dt) == 0:
+            # store copy of system state every 1 / dt iterations
+            # example: dt = 0.05 --> every 20 iterations
+            if int(i % (1 / self.dt)) == 0:
                 self._system_states.append(system_backup)
 
         print("Simulation finished")
