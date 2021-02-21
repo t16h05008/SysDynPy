@@ -1,0 +1,5 @@
+==================
+stock
+==================
+
+.. automodule:: sysdynpy.stock

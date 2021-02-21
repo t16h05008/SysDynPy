@@ -1,0 +1,5 @@
+=======================
+dynamicvariable
+=======================
+
+.. automodule:: sysdynpy.dynamicvariable

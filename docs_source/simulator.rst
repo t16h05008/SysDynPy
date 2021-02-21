@@ -1,0 +1,5 @@
+==================
+simulator
+==================
+
+.. automodule:: sysdynpy.simulator
