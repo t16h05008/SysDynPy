@@ -83,10 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
 </ul>
 
             
@@ -154,53 +151,73 @@
             
   <h1>Source code for sysdynpy.flow</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">sysdynpy.systemelement</span> <span class="kn">import</span> <span class="n">SystemElement</span>
-<span class="kn">from</span> <span class="nn">sysdynpy.system</span> <span class="kn">import</span> <span class="n">System</span>
-<span class="kn">import</span> <span class="nn">sysdynpy.utils</span> <span class="k">as</span> <span class="nn">utils</span>
 
 <div class="viewcode-block" id="Flow"><a class="viewcode-back" href="../../flow.html#sysdynpy.flow.Flow">[docs]</a><span class="k">class</span> <span class="nc">Flow</span><span class="p">(</span><span class="n">SystemElement</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;TODO&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Represents the system dynamics element &#39;Flow&#39;.</span>
 
-<div class="viewcode-block" id="Flow.__init__"><a class="viewcode-back" href="../../flow.html#sysdynpy.flow.Flow.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">system</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">system</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_input_elements</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="sd">    Flows are also known as rates. The value of flows can be calculated from</span>
+<span class="sd">    stocks and parameters at any time. They don&#39;t need an initial value.</span>
 
-        <span class="n">utils</span><span class="o">.</span><span class="n">_check_if_system_element_name_is_unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="c1"># add to list of elements in system class</span>
-        <span class="n">system</span><span class="o">.</span><span class="n">system_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+<div class="viewcode-block" id="Flow.__init__"><a class="viewcode-back" href="../../flow.html#sysdynpy.flow.Flow.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">calc_rule</span><span class="p">,</span> <span class="n">input_elements</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method.</span>
+
+<span class="sd">        :param name: The element name. Can not be empty. Must be unique within the system.</span>
+<span class="sd">        :type name: str</span>
+<span class="sd">        :param system: The system that this element shall be part of.</span>
+<span class="sd">        :type system: System</span>
+<span class="sd">        :param var_name: The name of the variable this element will be assigned to,</span>
+<span class="sd">            once it is constructed. This is needed because the variable name has to</span>
+<span class="sd">            be known in other modules to execute the lambda expression that defines</span>
+<span class="sd">            the calculation rule.</span>
+<span class="sd">        :type var_name: str</span>
+<span class="sd">        :param calc_rule: The rule used to calculate the value property.</span>
+<span class="sd">            Input elements are referenced by their :py:attr:`~var_name` property.</span>
+<span class="sd">            The calculation rule is stored as a lambda expression. This means that</span>
+<span class="sd">            all valid python expression are valid as calculation rules.</span>
+<span class="sd">        :type calc_rule: function</span>
+<span class="sd">        :param input_elements: The system elements needed to calculate the</span>
+<span class="sd">            value for this element (usually connected by arrows in a simulation</span>
+<span class="sd">            diagram), defaults to an empty list</span>
+<span class="sd">        :type input_elements: list, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">var_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc_rule</span> <span class="o">=</span> <span class="n">calc_rule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_elements</span> <span class="o">=</span> <span class="n">input_elements</span> <span class="ow">or</span> <span class="p">[]</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">calc_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_rule</span>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_elements</span>
+
 
     <span class="nd">@calc_rule</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">calc_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">_validate_calc_rule</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_elements</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">v</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calc_rule</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_rule</span> <span class="o">=</span> <span class="n">value</span>
 
 
     <span class="nd">@input_elements</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">input_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_elements</span> <span class="o">=</span> <span class="n">value</span>
 
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> \
-            <span class="o">+</span> <span class="s2">&quot;, value: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="s2">&quot;, system: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="s2">&quot;, calc_rule: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_rule</span> \
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;{ name: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;, value: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;, system: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="s2">&quot;, var_name: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="p">)</span> \
             <span class="o">+</span> <span class="s2">&quot; }&quot;</span>
         <span class="k">return</span> <span class="n">s</span></div>
 </pre></div>

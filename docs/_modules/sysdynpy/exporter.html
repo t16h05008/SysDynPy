@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>sysdynpy.exporter &mdash; SysDynPy 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SysDynPy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SysDynPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sysdynpy.exporter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sysdynpy.exporter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+
+<div class="viewcode-block" id="Exporter"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter.Exporter">[docs]</a><span class="k">class</span> <span class="nc">Exporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An **abstract** class that can be used to export simulation results to</span>
+<span class="sd">    different formats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_supported_formats</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot; A list of supported file formats. Used internally to validate a given input format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Exporter.export_data"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter.Exporter.export_data">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">export_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">,</span> <span class="n">rel_path</span><span class="o">=</span><span class="s2">&quot;./results&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the simulation results to the file system.</span>
+
+<span class="sd">         rel path: .\\somepath  ./somepath  somepath ../somepath ..\\somepath</span>
+
+<span class="sd">        :param results: The result of the simulation</span>
+<span class="sd">        :type results: dict, see :py:func:`~sysdynpy.simulator.get_simulation_results`</span>
+<span class="sd">            for more details.</span>
+<span class="sd">        :param file_format: &#39;csv&#39; or &#39;json&#39;</span>
+<span class="sd">        :type file_format: str</span>
+<span class="sd">        :param system_elements: Names of the system elements to export data for.</span>
+<span class="sd">        :type system_elements: list of strings</span>
+<span class="sd">        :param rel_path: The path where to store the exported file (including the filename).</span>
+<span class="sd">            Relative to the current working directory. Can include the file format.</span>
+<span class="sd">            If it is not included it will be appended. Make sure the folder</span>
+<span class="sd">            already exists, it will not be created. Defaults to &quot;./results&quot;.</span>
+
+<span class="sd">            Examples:</span>
+
+<span class="sd">                |  .\\\\\\\\path\\\\\\\\to\\\\\\\\file.csv</span>
+<span class="sd">                |  ./path/to/file.json</span>
+<span class="sd">                |  ..\\\\\\\\path\\\\\\\\to\\\\\\\\file.json</span>
+<span class="sd">                |  ../path/to/file</span>
+<span class="sd">        :type rel_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_path</span><span class="p">,</span> <span class="n">results_filtered</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+           <span class="n">out_path</span><span class="p">,</span> <span class="n">results_filtered</span> <span class="o">=</span> \
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_prepare_export</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">v</span>
+        
+        <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+                <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">results_filtered</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results_filtered</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results_filtered</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+              
+
+        
+<div class="viewcode-block" id="Exporter.export_graph"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter.Exporter.export_graph">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">export_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">,</span> \
+        <span class="n">range_x</span><span class="p">,</span> <span class="n">range_y</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label_x</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label_y</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">legend_pos</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">rel_path</span><span class="o">=</span><span class="s2">&quot;./results&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a diagram from the simulation results and saves it to the file</span>
+<span class="sd">        system.</span>
+
+<span class="sd">        Many arguments get piped through to `Matplotlib &lt;https://matplotlib.org/&gt;`__.</span>
+<span class="sd">        See the `Documentation &lt;https://matplotlib.org/api/pyplot_summary.html&gt;`__</span>
+<span class="sd">        for details. This method serves as a quick way to create a graph, but is</span>
+<span class="sd">        fairly limited in its options. Use the Matplotlib API directly if you</span>
+<span class="sd">        need more customization.</span>
+
+<span class="sd">        :param results: The result of the simulation</span>
+<span class="sd">        :type results: dict, see :py:func:`~sysdynpy.simulator.get_simulation_results`</span>
+<span class="sd">            for more details.</span>
+<span class="sd">        :param file_format: &#39;jpg&#39; or &#39;png&#39;</span>
+<span class="sd">        :type file_format: str</span>
+<span class="sd">        :param system_elements: Names of the system elements to export data for.</span>
+<span class="sd">        :type system_elements: list of strings</span>
+<span class="sd">        :param range_y: Matplotlib parameter. Defines the range of the y-axis.</span>
+<span class="sd">            List with two integers. The first is the lower boundary, the second</span>
+<span class="sd">            is the upper boundary.</span>
+<span class="sd">        :type range_y: list of integers </span>
+<span class="sd">        :param colors: Matplotlib parameter. Colors to use for the trajectories.</span>
+<span class="sd">            Each color corresponds to the system element at the same index.</span>
+<span class="sd">        :type colors: list of strings.</span>
+<span class="sd">        :param title: Matplotlib parameter. Headline of the plot, defaults to &quot;&quot;</span>
+<span class="sd">        :type title: str</span>
+<span class="sd">        :param label_x: Matplotlib parameter. Label for the x-axis, defaults to &quot;&quot;</span>
+<span class="sd">        :type label_x: str</span>
+<span class="sd">        :param label_y: Matplotlib parameter. Label for the y-axis, defaults to &quot;&quot;</span>
+<span class="sd">        :type label_y: str</span>
+<span class="sd">        :param line_width: Matplotlib parameter. Width of the trajectories, defaults to 1</span>
+<span class="sd">        :type line_width: float</span>
+<span class="sd">        :param legend_pos: Matplotlib parameter. Position of the legend in the</span>
+<span class="sd">            canvas, defaults to &quot;upper left&quot;</span>
+<span class="sd">        :type legend_pos: str</span>
+<span class="sd">        :param rel_path: The path where to store the exported file (including the filename).</span>
+<span class="sd">            Relative to the current working directory. Can include the file format.</span>
+<span class="sd">            If it is not included it will be appended. Make sure the folder</span>
+<span class="sd">            already exists, it will not be created. Defaults to &quot;./results&quot;.</span>
+
+<span class="sd">            Examples:</span>
+
+<span class="sd">                |  .\\\\\\\\path\\\\\\\\to\\\\\\\\file.csv</span>
+<span class="sd">                |  ./path/to/file.json</span>
+<span class="sd">                |  ..\\\\\\\\path\\\\\\\\to\\\\\\\\file.json</span>
+<span class="sd">                |  ../path/to/file</span>
+<span class="sd">        :type rel_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_path</span><span class="p">,</span> <span class="n">results_filtered</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+           <span class="n">out_path</span><span class="p">,</span> <span class="n">results_filtered</span> <span class="o">=</span> \
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_prepare_export</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">v</span>
+        
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">results_filtered</span><span class="p">:</span>
+            <span class="n">data_x</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results_filtered</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+            <span class="n">data_y</span> <span class="o">=</span> <span class="n">results_filtered</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="c1"># get position of current key in system_elements so we can set the right color</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">system_elements</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> \
+                <span class="n">linewidth</span><span class="o">=</span><span class="n">line_width</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">label_x</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">label_y</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">range_x</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">range_y</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">legend_pos</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span> <span class="c1"># save</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span> <span class="c1"># reset plot</span></div>
+
+<div class="viewcode-block" id="Exporter._prepare_export"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter.Exporter._prepare_export">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_prepare_export</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepares the export. </span>
+
+<span class="sd">        Contains actions that have to be done regardless of export format.</span>
+<span class="sd">        These actions include:</span>
+
+<span class="sd">        * check if file format is supported</span>
+<span class="sd">        * check if given system elements are in results</span>
+<span class="sd">        * filter results to only contain given system elements</span>
+<span class="sd">        * join the given relative path to the location the script is executed from</span>
+<span class="sd">        </span>
+<span class="sd">        All these actions are done in separate methods.</span>
+
+<span class="sd">        :param file_format: One of the file formats in :py:attr:`~_supported_formats`</span>
+<span class="sd">        :type file_format: str</span>
+<span class="sd">        :param results: The result of the simulation</span>
+<span class="sd">        :type results: dict, see :py:func:`~sysdynpy.simulator.get_simulation_results`</span>
+<span class="sd">            for more details.</span>
+<span class="sd">        :param system_elements: Names of the system elements to export data for.</span>
+<span class="sd">        :type system_elements: list of strings</span>
+<span class="sd">        :param rel_path: The path where to store the exported file (including the filename).</span>
+<span class="sd">            Relative to the current working directory. Can include the file format.</span>
+<span class="sd">            If it is not included it will be appended. Make sure the folder</span>
+<span class="sd">            already exists, it will not be created. Defaults to &quot;./results&quot;.</span>
+
+<span class="sd">            Examples:</span>
+
+<span class="sd">                |  .\\\\\\\\path\\\\\\\\to\\\\\\\\file.csv</span>
+<span class="sd">                |  ./path/to/file.json</span>
+<span class="sd">                |  ..\\\\\\\\path\\\\\\\\to\\\\\\\\file.json</span>
+<span class="sd">                |  ../path/to/file</span>
+<span class="sd">        :type rel_path: str</span>
+<span class="sd">        :return: A tuple with two elements:</span>
+
+<span class="sd">            * the joined, absolute output path</span>
+<span class="sd">            * a filtered version of the result dictionary, including only the</span>
+<span class="sd">                system elements to export</span>
+<span class="sd">        :rtype: (str, dict)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if file format is supported</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_file_format</span><span class="p">(</span><span class="n">file_format</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">v</span>
+
+        <span class="c1"># check if all given system elements are in results</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_check_if_system_elements_in_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">v</span>
+
+         <span class="c1"># filter results to only contain given system elements</span>
+        <span class="n">results_filtered</span> <span class="o">=</span> <span class="n">_filter_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">)</span>
+        
+        <span class="c1"># create file output path</span>
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">_create_abs_output_path</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">results_filtered</span></div>
+
+<div class="viewcode-block" id="Exporter._check_file_format"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter.Exporter._check_file_format">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_check_file_format</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_format</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks if the given file format is supported.</span>
+
+<span class="sd">        :param file_format: file format to check</span>
+<span class="sd">        :type file_format: str</span>
+<span class="sd">        :raises ValueError: If the file format is not supported</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">file_format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_supported_formats</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given file format &#39;&quot;</span> <span class="o">+</span> <span class="n">file_format</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39; is not supported. Supported formats are: &quot;</span>
+            <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_supported_formats</span><span class="p">)</span></div></div>
+
+    
+<div class="viewcode-block" id="_create_abs_output_path"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter._create_abs_output_path">[docs]</a><span class="k">def</span> <span class="nf">_create_abs_output_path</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">file_format</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Joins the current working directory with the relative path.</span>
+
+<span class="sd">    :param rel_path: The path to join.</span>
+<span class="sd">    </span>
+<span class="sd">        Examples:</span>
+
+<span class="sd">                |  .\\\\\\\\path\\\\\\\\to\\\\\\\\file.csv</span>
+<span class="sd">                |  ./path/to/file.json</span>
+<span class="sd">                |  ..\\\\\\\\path\\\\\\\\to\\\\\\\\file.json</span>
+<span class="sd">                |  ../path/to/file</span>
+<span class="sd">    :type rel_path: str</span>
+<span class="sd">    :param file_format: The file format to append to the path.</span>
+<span class="sd">    :type file_format: str</span>
+<span class="sd">    :return: The joined, absolute path</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">file_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rel_path</span><span class="p">:</span>
+        <span class="n">rel_path</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">file_format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">current_dir</span> <span class="o">/</span> <span class="n">rel_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="_check_if_system_elements_in_results"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter._check_if_system_elements_in_results">[docs]</a><span class="k">def</span> <span class="nf">_check_if_system_elements_in_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks if the given system elements are included in the result dictionary.</span>
+
+<span class="sd">    :param results: The dictionary with simulation results.</span>
+<span class="sd">    :type results: dict</span>
+<span class="sd">    :param system_elements: List of system element names</span>
+<span class="sd">    :type system_elements: list of strings</span>
+<span class="sd">    :raises ValueError: If any of the system element names in not in the</span>
+<span class="sd">        simulation results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">system_elements</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given system element &quot;</span>
+                <span class="o">+</span> <span class="n">element</span> <span class="o">+</span> <span class="s2">&quot; is not in simulation results&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_filter_results"><a class="viewcode-back" href="../../exporter.html#sysdynpy.exporter._filter_results">[docs]</a><span class="k">def</span> <span class="nf">_filter_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">system_elements</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filters the simulation results to only include certain system elements.</span>
+
+<span class="sd">    :param results: The simulation results</span>
+<span class="sd">    :type results: dict</span>
+<span class="sd">    :param system_elements: List of system element names to keep</span>
+<span class="sd">    :type system_elements: list of strings</span>
+<span class="sd">    :return: The filtered results</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results_filtered</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">system_elements</span><span class="p">:</span>
+            <span class="n">results_filtered</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">results_filtered</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Tim Herker.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

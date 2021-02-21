@@ -83,10 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
 </ul>
 
             
@@ -154,67 +151,112 @@
             
   <h1>Source code for sysdynpy.systemelement</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">sysdynpy.system</span> <span class="kn">import</span> <span class="n">System</span>
-<span class="kn">import</span> <span class="nn">sysdynpy.utils</span> <span class="k">as</span> <span class="nn">utils</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<div class="viewcode-block" id="SystemElement"><a class="viewcode-back" href="../../systemelement.html#sysdynpy.systemelement.SystemElement">[docs]</a><span class="k">class</span> <span class="nc">SystemElement</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">SubclassOnlyABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;some class &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SubclassOnlyABC"><a class="viewcode-back" href="../../systemelement.html#sysdynpy.systemelement.SubclassOnlyABC">[docs]</a><span class="k">class</span> <span class="nc">SubclassOnlyABC</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helper class to prevent instantiation.</span>
+<span class="sd">    The class SystemElement is declared as abstract and should not be instantiated.</span>
+<span class="sd">    However, if there are no abstract methods present, it could be</span>
+<span class="sd">    instantiated.</span>
+<span class="sd">    </span>
+<span class="sd">    By deriving SystemElement from this class we ensure that no instances can be</span>
+<span class="sd">    created. This is done by overriding the __new__ method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span> <span class="o">==</span> <span class="p">(</span><span class="n">SubclassOnlyABC</span><span class="p">,):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Abstract class </span><span class="si">{}</span><span class="s1"> cannot be instantiated&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SubclassOnlyABC</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SystemElement.__init__"><a class="viewcode-back" href="../../systemelement.html#sysdynpy.systemelement.SystemElement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">system</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SystemElement"><a class="viewcode-back" href="../../systemelement.html#sysdynpy.systemelement.SystemElement">[docs]</a><span class="k">class</span> <span class="nc">SystemElement</span><span class="p">(</span><span class="n">SubclassOnlyABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An **abstract** class for generic system elements. Concrete system elements</span>
+<span class="sd">    like stacks or flows are derived from this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SystemElement.__init__"><a class="viewcode-back" href="../../systemelement.html#sysdynpy.systemelement.SystemElement.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">var_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method.</span>
+
+<span class="sd">        As this is an abstract class this constructor **can not be called** directly.</span>
+<span class="sd">        But it provides a way to bundle code that needs to run when a subclass</span>
+<span class="sd">        instance is created.</span>
+
+<span class="sd">        :param name: The element name. Can not be empty. Must be unique within the system.</span>
+<span class="sd">        :type name: str</span>
+<span class="sd">        :param system: The system that this element shall be part of.</span>
+<span class="sd">        :type system: System</span>
+<span class="sd">        :param var_name: The name of the variable this element will be assigned to,</span>
+<span class="sd">            once it is constructed. This is needed because the variable name has to</span>
+<span class="sd">            be known in other modules to execute the lambda expression that defines</span>
+<span class="sd">            the calculation rule.</span>
+<span class="sd">        :type var_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_name</span> <span class="o">=</span> <span class="n">var_name</span>
+        <span class="c1"># add to list of elements in system class</span>
+        <span class="n">system</span><span class="o">.</span><span class="n">_system_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
-    
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The numeric value that is used in calculations.</span>
+
+<span class="sd">        :type: int or float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
-    
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">var_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_name</span>
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_system</span>
+
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO</span>
-<span class="sd">        string</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;name can not be empty&quot;</span><span class="p">)</span>
-    
+
+
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO</span>
-<span class="sd">        double</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+
 
     <span class="nd">@system</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">system</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; TODO</span>
-<span class="sd">        System</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_system</span> <span class="o">=</span> <span class="n">value</span>
-    
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes element from system elements list</span>
-<span class="sd">        This method get executed when the object gets destroyed</span>
-<span class="sd">        by the garbage collector. The object remains in the list</span>
-<span class="sd">        until this happens, even after the reference has been deleted</span>
-<span class="sd">        using the &quot;del&quot; keyword. </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">existing_system_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">system_elements</span>
-        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">existing_system_elements</span><span class="p">:</span>
-            <span class="n">existing_system_elements</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+    <span class="nd">@var_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">var_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># check if value is a valid python variable name</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[a-zA-Z_][a-zA-Z\d_]*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given name &quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">&quot; is no valid name for a &quot;</span> \
+                <span class="o">+</span> <span class="s2">&quot;python variable&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

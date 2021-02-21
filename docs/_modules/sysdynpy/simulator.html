@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>sysdynpy.simulator &mdash; SysDynPy 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SysDynPy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SysDynPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sysdynpy.simulator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sysdynpy.simulator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numbers</span>
+
+<div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Can be used to run simulations for a given system.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VALID_TIME_UNITS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">,</span> <span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hours&quot;</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="s2">&quot;weeks&quot;</span><span class="p">,</span> <span class="s2">&quot;months&quot;</span><span class="p">,</span> <span class="s2">&quot;years&quot;</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Possible values for the property :py:attr:`~time_unit`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Simulator.__init__"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">time_unit</span> <span class="o">=</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method.</span>
+
+<span class="sd">        :param simulation_steps: The number of steps to simulate</span>
+<span class="sd">            when run_simulation() is called, defaults to 10</span>
+<span class="sd">        :type simulation_steps: int</span>
+<span class="sd">        :param time_unit: Defines the time period of one simulation step.</span>
+<span class="sd">            The value must be one of the values defines in :py:attr:`~VALID_TIME_UNITS`</span>
+<span class="sd">            , defaults to &quot;days&quot;</span>
+<span class="sd">        :type time_unit: str</span>
+<span class="sd">        :param dt: The interval between calculations. Must be a number between</span>
+<span class="sd">            zero and one. The reciprocal of this argument is the number of </span>
+<span class="sd">            calculation steps per simulation step. One means that the system </span>
+<span class="sd">            element values are calculated once per simulation step. Smaller </span>
+<span class="sd">            numbers result in higher accuracy but longer calculation times while </span>
+<span class="sd">            greater numbers lead to faster calculations but lower accuracy.</span>
+<span class="sd">            Defaults to 0.05.</span>
+
+<span class="sd">            |  Example: </span>
+<span class="sd">            |  0.05 means the reciprocal is 1 / 0.05 = 20. So by default</span>
+<span class="sd">               20 calculations are done per simulation step.</span>
+<span class="sd">        :type dt: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_steps</span> <span class="o">=</span> <span class="n">simulation_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_system_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot; Stores the system state after each simulation step.</span>
+<span class="sd">        </span>
+<span class="sd">        :type: list</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="Simulator.run_simulation"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator.run_simulation">[docs]</a>    <span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs a simulation for the given system.</span>
+
+<span class="sd">        Once the simulation is finished, results are available by calling</span>
+<span class="sd">        :py:meth:`~get_simulation_results`</span>
+
+<span class="sd">        :param system: The system to run a simulation for.</span>
+<span class="sd">        :type system: System</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation started&quot;</span><span class="p">)</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In the initial iteration values for dynamic variables and</span>
+<span class="sd">        flows are calculated, but nothing else changes. So we need one iteration</span>
+<span class="sd">        more to get the required number of steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_steps</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            
+            <span class="c1"># make a deep copy of the current system state</span>
+            <span class="n">system_backup</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+
+            <span class="c1"># iterate all system elements</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_backup</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">):</span>
+                <span class="c1"># for flows and dynamic variables</span>
+                <span class="k">if</span> <span class="s2">&quot;Flow&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">&quot;DynamicVariable&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">)):</span>
+                    <span class="c1"># set the calculated value directly</span>
+                    <span class="n">system</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_value</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span> <span class="c1"># for parameters and stocks</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># in the first iteration only store the initial system state</span>
+                <span class="n">system_backup</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_system_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">system_backup</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># for stocks </span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_backup</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">):</span>
+                <span class="k">if</span>  <span class="s2">&quot;Stock&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">)):</span>
+                    <span class="n">current_stock_value</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                    <span class="n">change</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_stock_change</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+                    <span class="n">system</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">current_stock_value</span> <span class="o">+</span> <span class="n">change</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
+
+            <span class="c1"># store copy of system state every 1 / dt iterations</span>
+            <span class="c1"># example: dt = 0.05 --&gt; every 20 iterations</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_system_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">system_backup</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation finished&quot;</span><span class="p">)</span></div>
+
+        
+
+<div class="viewcode-block" id="Simulator.get_simulation_results"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator.get_simulation_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulation_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides the trajectories of all system elements during the</span>
+<span class="sd">        simulation. Must be called after the simulation.</span>
+
+<span class="sd">        :return: </span>
+<span class="sd">            A dictionary where each key corresponds to the name of a</span>
+<span class="sd">            system element. The values are lists. For each simulation step</span>
+<span class="sd">            a list contains the value of the system element (key) at that</span>
+<span class="sd">            simulation step.</span>
+
+<span class="sd">            Example:</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    someStockName: [10, 7.5, 5, 3.5, 2.5, 3, 3],</span>
+<span class="sd">                    someFlowName: [0, -2.5, -2, -1.5, -1, 0, 0],</span>
+<span class="sd">                    someParameterName: [3, 3, 3, 3, 3, 3, 3]</span>
+<span class="sd">                }</span>
+<span class="sd">        :rtype: None or dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_system_states</span><span class="p">:</span> <span class="c1"># empty</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># create dict from list of system states</span>
+            <span class="c1"># for each state</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_system_states</span><span class="p">:</span>
+                <span class="c1"># iterate system elements</span>
+                <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">_system_elements</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="Simulator._calculate_value"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator._calculate_value">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the value for a given element based on the calculation rule.</span>
+
+<span class="sd">        This is a recursive function to calculate the value of a flow or</span>
+<span class="sd">        dynamic variable. The values of flows or dynamic variables can always be</span>
+<span class="sd">        deduced from parameters or stocks. But it can not be assumed that a dynamic</span>
+<span class="sd">        variable or flow **directly** depends on only parameters or stocks.</span>
+
+<span class="sd">        :param element: The element to calculate a value for.</span>
+<span class="sd">        :type element: Flow or DynamicVariable</span>
+<span class="sd">        :return: The calculated value</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">calc_rule</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">calc_rule</span>
+
+        <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># store var_name of input elements as keys in temp_dict.</span>
+        <span class="c1"># dict values are the values of input_elements</span>
+        <span class="k">for</span> <span class="n">inp_elem</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">input_elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;Stock&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">inp_elem</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">&quot;Parameter&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">inp_elem</span><span class="p">)):</span>
+                <span class="n">temp_dict</span><span class="p">[</span><span class="n">inp_elem</span><span class="o">.</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">inp_elem</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp_dict</span><span class="p">[</span><span class="n">inp_elem</span><span class="o">.</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_value</span><span class="p">(</span><span class="n">inp_elem</span><span class="p">)</span>
+        
+        <span class="c1"># replace the reference to the classes in the scope of the lambda expression</span>
+        <span class="c1"># with the values. __globals__ is a dict, so we can update it.</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">temp_dict</span><span class="p">:</span>
+            <span class="n">calc_rule</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">calc_rule</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Simulator._calculate_stock_change"><a class="viewcode-back" href="../../simulator.html#sysdynpy.simulator.Simulator._calculate_stock_change">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_stock_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stock</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the change for a given stock based on the calculation rule.</span>
+
+<span class="sd">        This method only checks the input- and output flows of the stock. It presumes</span>
+<span class="sd">        that values for these flows have already been calculated for the current</span>
+<span class="sd">        simulation step.</span>
+
+<span class="sd">        :param stock: The stock to calculate the change for.</span>
+<span class="sd">        :type stock: Stock</span>
+<span class="sd">        :return: The calculated value</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">calc_rule</span> <span class="o">=</span> <span class="n">stock</span><span class="o">.</span><span class="n">calc_rule</span>
+
+        <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">inp_elem</span> <span class="ow">in</span> <span class="n">stock</span><span class="o">.</span><span class="n">input_elements</span><span class="p">:</span>
+                <span class="n">temp_dict</span><span class="p">[</span><span class="n">inp_elem</span><span class="o">.</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">inp_elem</span><span class="o">.</span><span class="n">value</span>
+        
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">temp_dict</span><span class="p">:</span>
+            <span class="n">calc_rule</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">calc_rule</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">simulation_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_steps</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_unit</span>
+    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;see :py:meth:`~__init__`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
+    
+
+    <span class="nd">@simulation_steps</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">simulation_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_steps</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;simulation_steps must be positive.&quot;</span><span class="p">)</span>
+
+
+    <span class="nd">@time_unit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">Simulator</span><span class="o">.</span><span class="n">VALID_TIME_UNITS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_unit</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given time unit &quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">&quot; is not allowed. &quot;</span> \
+                <span class="o">+</span> <span class="s2">&quot;Allowed values are: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Simulator</span><span class="o">.</span><span class="n">VALID_TIME_UNITS</span><span class="p">))</span>
+    
+
+    <span class="nd">@dt</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">value</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Tim Herker.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

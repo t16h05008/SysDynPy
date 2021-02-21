@@ -1,62 +1,107 @@
 from abc import ABC, abstractmethod
+import re
 from sysdynpy.system import System
-import sysdynpy.utils as utils
+from abc import ABC, ABCMeta, abstractmethod
 
-class SystemElement(utils.SubclassOnlyABC):
-    """some class """
+class SubclassOnlyABC(object):
+    """Helper class to prevent instantiation.
+    The class SystemElement is declared as abstract and should not be instantiated.
+    However, if there are no abstract methods present, it could be
+    instantiated.
+    
+    By deriving SystemElement from this class we ensure that no instances can be
+    created. This is done by overriding the __new__ method.
+    """
+    __metaclass__ = ABCMeta
+    def __new__(cls, *args, **kwargs):
+        if cls.__bases__ == (SubclassOnlyABC,):
+            msg = 'Abstract class {} cannot be instantiated'.format(cls.__name__)
+            raise TypeError(msg)
+        return super(SubclassOnlyABC, cls).__new__(cls)
 
-    def __init__(self, name, value, system):
+
+class SystemElement(SubclassOnlyABC):
+    """An **abstract** class for generic system elements. Concrete system elements
+    like stacks or flows are derived from this class.
+    """
+
+    def __init__(self, name, system, var_name):
+        """Constructor method.
+
+        As this is an abstract class this constructor **can not be called** directly.
+        But it provides a way to bundle code that needs to run when a subclass
+        instance is created.
+
+        :param name: The element name. Can not be empty. Must be unique within the system.
+        :type name: str
+        :param system: The system that this element shall be part of.
+        :type system: System
+        :param var_name: The name of the variable this element will be assigned to,
+            once it is constructed. This is needed because the variable name has to
+            be known in other modules to execute the lambda expression that defines
+            the calculation rule.
+        :type var_name: str
+        """
         self.name = name
-        self.value = value
         self.system = system
+        self.var_name = var_name
+        # add to list of elements in system class
+        system._system_elements.append(self)
+
 
     @property
     def name(self):
-        """ TODO """
+        """see :py:meth:`~__init__`
+        """
         return self._name
-    
+
+
     @property
     def value(self):
-        """ TODO """
+        """The numeric value that is used in calculations.
+
+        :type: int or float
+        """
         return self._value
-    
+
+
+    @property
+    def var_name(self):
+        """see :py:meth:`~__init__`
+        """
+        return self._var_name
+
+
     @property
     def system(self):
-        """ TODO """
+        """see :py:meth:`~__init__`
+        """
         return self._system
+
 
     @name.setter
     def name(self, value):
-        """ TODO
-        string
-        """
         if len(value):
             self._name = value
         else:
             raise ValueError("name can not be empty")
-    
+
+
     @value.setter
     def value(self, value):
-        """ TODO
-        double
-        """
         self._value = value
+
 
     @system.setter
     def system(self, value):
-        """ TODO
-        System
-        """
         self._system = value
-    
 
-    def __del__(self):
-        """Removes element from system elements list
-        This method get executed when the object gets destroyed
-        by the garbage collector. The object remains in the list
-        until this happens, even after the reference has been deleted
-        using the "del" keyword. 
-        """
-        existing_system_elements = self.system.system_elements
-        if self in existing_system_elements:
-            existing_system_elements.remove(self)
+    @var_name.setter
+    def var_name(self, value):
+        # check if value is a valid python variable name
+        pattern = re.compile("[a-zA-Z_][a-zA-Z\d_]*")
+        if pattern.match(value):
+            self._var_name = value
+        else:
+            raise ValueError("Given name " + value + " is no valid name for a " \
+                + "python variable")

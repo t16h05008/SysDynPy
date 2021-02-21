@@ -1,54 +1,86 @@
+import pprint
+
 from sysdynpy.system import *
 from sysdynpy.stock import *
 from sysdynpy.flow import *
 from sysdynpy.dynamicvariable import *
 from sysdynpy.parameter import *
+from sysdynpy.simulator import *
+from sysdynpy.exporter import *
 
-# This example implements the Lotka-Volterra model.
+"""
+This example implements the Lotka-Volterra model.
+The corresponding simulation diagram can be found in the file
+"simulation-diagram-lotka-volterra.png".
+"""
+
+number_of_simulation_steps = 200
 
 # create system
-lv_system = System("lotka-volterra", 7, "weeks")
+lv_system = System("lotka-volterra")
 
 # create elements
-raeuber = Stock("Räuber", 40, lv_system)
-beute = Stock("Beute", 500, lv_system)
+predators = Stock(name="Predators", value=40, system=lv_system, var_name="predators",
+    calc_rule=lambda: increase_in_predators - energy_loss)
+prey = Stock(name="Prey", value=500, system=lv_system, var_name="prey", 
+    calc_rule=lambda: increase_in_prey - decrease_in_prey)
 
-WACHSTUMSRATE_BEUTE = Parameter("WACHSTUMSRATE_BEUTE", 0.05, lv_system)
-VERLUSTRATE_BEUTE = Parameter("VERLUSTRATE_BEUTE", 0.001, lv_system)
-ZUWACHSRATE_RAEUBER = Parameter("ZUWACHSRATE_RÄUBER", 0.0002, lv_system)
-ENERGIEVERLUSTRATE_RAEUBER = Parameter("ENERGIEVERLUSTRATE_RÄUBER", 0.1, lv_system)
+GROWTH_RATE_PREY = Parameter(name="GROWTH RATE PREY", value=0.05,
+system=lv_system, var_name="GROWTH_RATE_PREY")
+LOSS_RATE_PREY = Parameter(name="LOSS RATE PREY", value=0.001,
+    system=lv_system, var_name="LOSS_RATE_PREY")
+GROWTH_RATE_PREDATORS = Parameter(name="GROWTH RATE PREDATORS", value=0.0002,
+    system=lv_system, var_name="GROWTH_RATE_PREDATORS")
+ENERGY_LOSS_RATE_PREDATORS = Parameter(name="ENERGY LOSS RATE PREDATORS", value=0.1,
+    system=lv_system, var_name="ENERGY_LOSS_RATE_PREDATORS")
 
-beutezuwachs = Flow("Beutezuwachs", lv_system)
-beuteverlust = Flow("Beuteverlust", lv_system)
-raeuberzuwachs = Flow("Räuberzuwachs", lv_system)
-energieverluste = Flow("Energieverluste", lv_system)
+increase_in_prey = Flow(name="increase in prey", system=lv_system,
+    var_name="increase_in_prey", calc_rule=lambda: GROWTH_RATE_PREY * prey)
+decrease_in_prey = Flow(name="decrease in prey", system=lv_system,
+    var_name="decrease_in_prey", calc_rule=lambda: LOSS_RATE_PREY * encounters)
+increase_in_predators = Flow(name="increase in predators", system=lv_system,
+    var_name="increase_in_predators", calc_rule=lambda: encounters * GROWTH_RATE_PREDATORS)
+energy_loss = Flow(name="energy loss", system=lv_system,
+    var_name="energy_loss", calc_rule=lambda: ENERGY_LOSS_RATE_PREDATORS * predators)
 
-treffen = DynamicVariable("Treffen", lv_system)
+encounters = DynamicVariable(name="encounters", system=lv_system, var_name="encounters",
+    calc_rule=lambda: prey * predators)
 
 # link elements
-raeuber.input_elements.extend([raeuberzuwachs, energieverluste])
-raeuberzuwachs.input_elements.extend([ZUWACHSRATE_RAEUBER, treffen])
-energieverluste.input_elements.extend([ENERGIEVERLUSTRATE_RAEUBER, raeuber])
+predators.input_elements.extend([increase_in_predators, energy_loss])
+prey.input_elements.extend([increase_in_prey, decrease_in_prey])
 
-treffen.input_elements.extend([beute, raeuber])
+increase_in_prey.input_elements.extend([prey, GROWTH_RATE_PREY])
+decrease_in_prey.input_elements.extend([encounters, LOSS_RATE_PREY])
+increase_in_predators.input_elements.extend([GROWTH_RATE_PREDATORS, encounters])
+energy_loss.input_elements.extend([ENERGY_LOSS_RATE_PREDATORS, predators])
 
-beute.input_elements.extend([beutezuwachs, beuteverlust])
-beutezuwachs.input_elements.extend([beute, WACHSTUMSRATE_BEUTE])
-beuteverlust.input_elements.extend([treffen, VERLUSTRATE_BEUTE])
+encounters.input_elements.extend([prey, predators])
 
-# set calculation rules
-raeuber.calc_rule = "Räuberzuwachs * Energieverluste"
-raeuberzuwachs.calc_rule = "Treffen * ZUWACHSRATE_RÄUBER"
-energieverluste = "ENERGIEVERLUSTRATE_RÄUBER * Räuber"
+# run simulation
+s1 = Simulator(number_of_simulation_steps, "weeks")
+s1.run_simulation(lv_system)
+# get_simulation_results() returns a dict
+# Key = Name of the system element, Value = List of numerical values
+sim_results = s1.get_simulation_results()
+# pprint.pprint(sim_results) # print formatted results to console
 
-treffen.calc_rule = "Beute * Räuber"
+# export results to various formats
+# make sure the subfolder "results" exists or change the relative path
+Exporter.export_data(results=sim_results, file_format="csv", \
+    system_elements=["Predators", "Prey"], rel_path="./results/lotka-volterra-results.csv")
 
-beute.calc_rule = "Beutezuwachs - Beuteverlust"
-beutezuwachs.calc_rule = "WACHSTUMSRATE_BEUTE * Beute"
-beuteverlust.calc_rule = "VERLUSTRATE_BEUTE * Treffen"
+Exporter.export_data(results=sim_results, file_format="json", \
+    system_elements=["Predators", "Prey"], rel_path=".\\results\\lotka-volterra-results.json")
 
-lv_system.show_system_elements()
+Exporter.export_graph(results=sim_results, file_format="jpg", \
+    system_elements=["Predators", "Prey"], rel_path="results/lotka-volterra-results", \
+    title="Lotka-Volterra simulation", label_x="t[weeks]", label_y="Number of Animals",
+    range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["red", "blue"],
+    line_width=2, legend_pos="upper right")
 
-#lv_system.run_simulation()
-#lv_system.export_simulation_results()
-#lv_system.visualize_simulation_results(raeuber, beute)
+Exporter.export_graph(results=sim_results, file_format="png", \
+    system_elements=["Prey", "Predators"], rel_path="results\\lotka-volterra-results", \
+    title="Lotka-Volterra simulation", label_x="t[weeks]", label_y="Number of Animals",
+    range_x=[0,number_of_simulation_steps], range_y=[0,600], colors=["green", "orange"],
+    line_width=2, legend_pos="upper left")

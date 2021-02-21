@@ -38,7 +38,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="flow" href="flow.html" />
+    <link rel="next" title="exporter" href="exporter.html" />
     <link rel="prev" title="Modules" href="modules.html" /> 
 </head>
 
@@ -85,19 +85,17 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dynamicvariable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exporter.html">exporter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html">flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parameter.html">parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulator.html">simulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stock.html">stock</a></li>
 <li class="toctree-l2"><a class="reference internal" href="system.html">system</a></li>
 <li class="toctree-l2"><a class="reference internal" href="systemelement.html">systemelement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
             
@@ -172,23 +170,75 @@
 <dl class="py class">
 <dt id="sysdynpy.dynamicvariable.DynamicVariable">
 <em class="property">class </em><code class="sig-prename descclassname">sysdynpy.dynamicvariable.</code><code class="sig-name descname">DynamicVariable</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/dynamicvariable.html#DynamicVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>Bases: <a class="reference internal" href="systemelement.html#sysdynpy.systemelement.SystemElement" title="sysdynpy.systemelement.SystemElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">sysdynpy.systemelement.SystemElement</span></code></a></p>
+<p>An auxiliary system element to simplify calculation rules.</p>
+<p>Dynamic variables are very similar to flows, but they don’t have
+to be connected to a stock. The value of dynamic variables can be calculated
+from stocks and parameters at any time. They don’t need an initial value.</p>
 <dl class="py method">
 <dt id="sysdynpy.dynamicvariable.DynamicVariable.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">system</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/dynamicvariable.html#DynamicVariable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">system</span></em>, <em class="sig-param"><span class="n">var_name</span></em>, <em class="sig-param"><span class="n">calc_rule</span></em>, <em class="sig-param"><span class="n">input_elements</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sysdynpy/dynamicvariable.html#DynamicVariable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The element name. Can not be empty. Must be unique within the system.</p></li>
+<li><p><strong>system</strong> (<a class="reference internal" href="system.html#sysdynpy.system.System" title="sysdynpy.system.System"><em>System</em></a>) – The system that this element shall be part of.</p></li>
+<li><p><strong>var_name</strong> (<em>str</em>) – The name of the variable this element will be assigned to,
+once it is constructed. This is needed because the variable name has to
+be known in other modules to execute the lambda expression that defines
+the calculation rule.</p></li>
+<li><p><strong>calc_rule</strong> (<em>function</em>) – The rule used to calculate the value property.
+Input elements are referenced by their <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.var_name" title="sysdynpy.dynamicvariable.DynamicVariable.var_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">var_name</span></code></a> property.
+The calculation rule is stored as a lambda expression. This means that
+all valid python expression are valid as calculation rules.</p></li>
+<li><p><strong>input_elements</strong> (<em>list</em><em>, </em><em>optional</em>) – The system elements needed to calculate the
+value for this element (usually connected by arrows in a simulation
+diagram), defaults to an empty list</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.dynamicvariable.DynamicVariable.calc_rule">
 <em class="property">property </em><code class="sig-name descname">calc_rule</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.calc_rule" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>see <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="sysdynpy.dynamicvariable.DynamicVariable.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sysdynpy.dynamicvariable.DynamicVariable.input_elements">
 <em class="property">property </em><code class="sig-name descname">input_elements</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.input_elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>see <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="sysdynpy.dynamicvariable.DynamicVariable.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sysdynpy.dynamicvariable.DynamicVariable.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>see <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="sysdynpy.dynamicvariable.DynamicVariable.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sysdynpy.dynamicvariable.DynamicVariable.system">
+<em class="property">property </em><code class="sig-name descname">system</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.system" title="Permalink to this definition">¶</a></dt>
+<dd><p>see <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="sysdynpy.dynamicvariable.DynamicVariable.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sysdynpy.dynamicvariable.DynamicVariable.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric value that is used in calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int or float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sysdynpy.dynamicvariable.DynamicVariable.var_name">
+<em class="property">property </em><code class="sig-name descname">var_name</code><a class="headerlink" href="#sysdynpy.dynamicvariable.DynamicVariable.var_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>see <a class="reference internal" href="#sysdynpy.dynamicvariable.DynamicVariable.__init__" title="sysdynpy.dynamicvariable.DynamicVariable.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -201,7 +251,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="flow.html" class="btn btn-neutral float-right" title="flow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="exporter.html" class="btn btn-neutral float-right" title="exporter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
