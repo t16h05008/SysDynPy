@@ -7,7 +7,7 @@ setuptools.setup(
   author_email='tim.herker@stud.hs-bochum.de',
   url='https://github.com/t16h05008/SysDynPy',
   license='LICENSE.txt',
-  description='A framework for building System Dynamics models',
+  description='A framework to build System Dynamics models',
   long_description=open('README.md').read(),
   long_description_content_type="text/markdown",
   packages=setuptools.find_packages(),

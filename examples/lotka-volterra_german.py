@@ -63,7 +63,7 @@ s1.run_simulation(lv_system)
 # get_simulation_results() returns a dict
 # Key = Name of the system element, Value = List of numerical values
 sim_results = s1.get_simulation_results()
-#pprint.pprint(sim_results) # print formatted results to console
+# pprint.pprint(sim_results) # print formatted results to console
 
 # export results to various formats
 # make sure the subfolder "results" exists or change the relative path

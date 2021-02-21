@@ -1,7 +1,7 @@
 class System(object):
     """This class represents a System Dynamics system/model.
 
-    It maintains a list of the system elements (:py:attr:`~_system_elements`).
+    It maintains a list of system elements (:py:attr:`~_system_elements`).
     """
 
     def __init__(self, name):
@@ -21,10 +21,11 @@ class System(object):
     def show_system_elements(self):
         """Creates a string with information about the system elements.
 
-        This includes the properties :code:`name` and :code:`var_name`. Depending on the system
-        element :code:`calc_rule` and :code:`input_elements` are given as additional
-        information. :code:`input_elements` only shows the name of all direct input
-        elements to prevent recursion.
+        This includes the properties :py:attr:`~.SystemElement.name` and 
+        :py:attr:`~.SystemElement.var_name`. Depending on the system element
+        :py:attr:`~.Stock.calc_rule` and :py:attr:`~.Stock.input_elements`
+        are given as additional information. :py:attr:`~.Stock.input_elements`
+        only shows the name of all direct input elements to prevent recursion.
         The string is printed to the console.
         """
         s = ""

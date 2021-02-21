@@ -8,17 +8,17 @@ class Simulator(object):
 
     VALID_TIME_UNITS = ("milliseconds", "seconds", "minutes",
         "hours", "days", "weeks", "months", "years")
-    """Possible values for the property :code:`time_unit`.
+    """Possible values for the property :py:attr:`~time_unit`.
     """
 
     def __init__(self, simulation_steps = 10, time_unit = "days", dt=0.05):
-        """Constructor method
+        """Constructor method.
 
         :param simulation_steps: The number of steps to simulate
             when run_simulation() is called, defaults to 10
         :type simulation_steps: int
         :param time_unit: Defines the time period of one simulation step.
-            The value must be one of the values defines in :code:`VALID_TIME_UNITS`
+            The value must be one of the values defines in :py:attr:`~VALID_TIME_UNITS`
             , defaults to "days"
         :type time_unit: str
         :param dt: The interval between calculations. Must be a number between
@@ -137,7 +137,7 @@ class Simulator(object):
 
 
     def _calculate_value(self, element):
-        """Calculates the values for a given element based on the calculation rule.
+        """Calculates the value for a given element based on the calculation rule.
 
         This is a recursive function to calculate the value of a flow or
         dynamic variable. The values of flows or dynamic variables can always be
@@ -152,23 +152,38 @@ class Simulator(object):
         calc_rule = element.calc_rule
 
         temp_dict = {}
+        # store var_name of input elements as keys in temp_dict.
+        # dict values are the values of input_elements
         for inp_elem in element.input_elements:
             if "Stock" in str(type(inp_elem)) or "Parameter" in str(type(inp_elem)):
                 temp_dict[inp_elem.var_name] = inp_elem.value
             else:
                 temp_dict[inp_elem.var_name] = self._calculate_value(inp_elem)
         
+        # replace the reference to the classes in the scope of the lambda expression
+        # with the values. __globals__ is a dict, so we can update it.
         for key in temp_dict:
             calc_rule.__globals__[key] = temp_dict[key]
 
         return calc_rule()
 
 
-    def _calculate_stock_change(self, element):
-        calc_rule = element.calc_rule
+    def _calculate_stock_change(self, stock):
+        """Calculates the change for a given stock based on the calculation rule.
+
+        This method only checks the input- and output flows of the stock. It presumes
+        that values for these flows have already been calculated for the current
+        simulation step.
+
+        :param stock: The stock to calculate the change for.
+        :type stock: Stock
+        :return: The calculated value
+        :rtype: float
+        """
+        calc_rule = stock.calc_rule
 
         temp_dict = {}
-        for inp_elem in element.input_elements:
+        for inp_elem in stock.input_elements:
                 temp_dict[inp_elem.var_name] = inp_elem.value
         
         for key in temp_dict:

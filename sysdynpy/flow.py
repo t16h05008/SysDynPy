@@ -5,6 +5,7 @@ class Flow(SystemElement):
 
     Flows are also known as rates. The value of flows can be calculated from
     stocks and parameters at any time. They don't need an initial value.
+
     """
 
     def __init__(self, name, system, var_name, calc_rule, input_elements=[]):
@@ -34,18 +35,19 @@ class Flow(SystemElement):
         self.input_elements = input_elements or []
 
 
-
     @property
     def calc_rule(self):
         """see :py:meth:`~__init__`
         """
         return self._calc_rule
 
+
     @property
     def input_elements(self):
         """see :py:meth:`~__init__`
         """
         return self._input_elements
+
 
     @calc_rule.setter
     def calc_rule(self, value):
