@@ -16,7 +16,7 @@ It provides classes representing core System Dynamics objects, like Stocks and F
 
 ## Installation
 
-The easiest way is to install the package from PyPi: TODO upload
+The easiest way is to install the package from PyPi:
 
     pip install --upgrade pip
     pip install SysDynPy
@@ -37,7 +37,9 @@ from the repositories root folder. This creates the `dist` directory, which cont
 ## How to get started
 The [examples directory](examples) provides some simple models that can serve as a starting point. We will break down the code of the Lotka-Volterra model (which is a quite common example in the System Dynamics field) step by step.
 The simulation diagram for the model we are about to implement looks like this:
-![simulation-diagram-lotka-volterra](examples/simulation-diagram-lotka-volterra.png "simulation-diagram-lotka-volterra"). 
+![simulation-diagram-lotka-volterra](examples/simulation-diagram-lotka-volterra.png "simulation-diagram-lotka-volterra").
+
+Using the library can be split into five steps:
 
 #### 1. Creating the system
 This step is pretty simple. We create a system so we can reference it when creating the system elements in the next step. The system keeps track of all system elements and can show them if needed by using `lv_system.show_system_elements()`.
@@ -53,12 +55,12 @@ lv_system = System("lotka-volterra")
 This is where the system gets filled with elements. We define stocks, parameters, flows and a dynamic variable. This is what the constructor arguments mean:
 
 * **name**: A name for the element. This is used for error messages and the exporter.
-* **value**: The initial value for the element
-* system: The reference to the system object
+* **value**: The initial value for the element.
+* **system**: The reference to the system object.
 * **var_name**: The name of the variable the object is assigned to once it is created. This is needed to have access to the variable name in other modules (e.g. to execute the lambda expression there).
 * **calc_rule**: A lambda expression that defines how the value should be calculated.
 
-Note that parameters have a fixed value, so the don't need a calculation rule. Flows and dynamic variables have no initial value.
+Note that parameters have a fixed value, so they don't need a calculation rule. Flows and dynamic variables have no initial value.
 
 ```python
 # create elements
@@ -108,7 +110,7 @@ encounters.input_elements.extend([prey, predators])
 
 #### 4. Run the simulation
 Now we are ready to run a simulation. This is done with a simulator. Multiple simulators can be used for different configurations (e.g. number of simulation steps), but for now we just use one.
-Once the simulation is done `get_simulation_results()` can be used to return them as a dictionary.
+Once the simulation is done `get_simulation_results()` can be used to return the results as a dictionary.
 
 ```python
 # run simulation
